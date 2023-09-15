@@ -1,8 +1,9 @@
 plugins {
     id("java")
+    id("io.freefair.lombok") version "8.3"
 }
 
-group = "com.sampaio.hiroshi.nibbles"
+group = "com.sampaio.hiroshi.nibbles.core"
 version = "1.0-SNAPSHOT"
 
 repositories {
