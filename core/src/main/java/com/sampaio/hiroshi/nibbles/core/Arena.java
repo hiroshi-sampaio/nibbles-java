@@ -1,20 +1,22 @@
 package com.sampaio.hiroshi.nibbles.core;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+@EqualsAndHashCode
 public class Arena {
 
   @Getter private final FieldMeasures fieldMeasures;
   private final Block[][] field;
 
-  protected static Arena of(final FieldMeasures fieldMeasures) {
-    return new Arena(fieldMeasures);
-  }
-
   private Arena(final FieldMeasures fieldMeasures) {
     this.fieldMeasures = fieldMeasures;
     this.field = new Block[fieldMeasures.getWidth()][fieldMeasures.getHeight()];
     fillArenaWithEmptyBlocks();
+  }
+
+  protected static Arena of(final FieldMeasures fieldMeasures) {
+    return new Arena(fieldMeasures);
   }
 
   public void fillArenaWithEmptyBlocks() {
@@ -48,5 +50,9 @@ public class Arena {
 
   public Block getAt(final int x, final int y) {
     return field[x][y];
+  }
+
+  public Block getAt(final Point point) {
+    return field[point.getX()][point.getY()];
   }
 }

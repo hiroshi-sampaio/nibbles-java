@@ -23,26 +23,32 @@ public class Orchestrator {
       switch (event) {
         case SNAKE_ONE_SLITHERS -> {
           final SnakeMovement snakeMovement = snakeMovements.get(Block.SNAKE_ONE); // todo
-          final Snake snake = gameContext.getSnakeByBlock(Block.SNAKE_ONE);
+          final Snake snake = snakeMovement.getSnake();
           snake.doUpdate(snakeMovement);
           updateArena(snakeMovement);
         }
         case SNAKE_TWO_SLITHERS -> {
           final SnakeMovement snakeMovement = snakeMovements.get(Block.SNAKE_TWO);
-          final Snake snake = gameContext.getSnakeByBlock(Block.SNAKE_TWO);
+          final Snake snake = snakeMovement.getSnake();
           snake.doUpdate(snakeMovement);
           updateArena(snakeMovement);
         }
-        case SNAKE_ONE_EATS -> gameContext.getSnakeByBlock(Block.SNAKE_ONE).grow(3); // todo
-        case SNAKE_TWO_EATS -> gameContext.getSnakeByBlock(Block.SNAKE_TWO).grow(3); // todo
+        case SNAKE_ONE_EATS -> gameContext
+            .getSnakeByBlock(Block.SNAKE_ONE)
+            .orElseThrow()
+            .grow(3); // todo
+        case SNAKE_TWO_EATS -> gameContext
+            .getSnakeByBlock(Block.SNAKE_TWO)
+            .orElseThrow()
+            .grow(3); // todo
         case SNAKE_ONE_RUNS_INTO_WALL,
             SNAKE_ONE_TRIPS_ON_ITSELF,
             SNAKE_ONE_BUMPS_INTO_SNAKE_TWO -> killSnake(
-            gameContext.getSnakeByBlock(Block.SNAKE_ONE));
+            gameContext.getSnakeByBlock(Block.SNAKE_ONE).orElseThrow());
         case SNAKE_TWO_RUNS_INTO_WALL,
             SNAKE_TWO_TRIPS_ON_ITSELF,
             SNAKE_TWO_BUMPS_INTO_SNAKE_ONE -> killSnake(
-            gameContext.getSnakeByBlock(Block.SNAKE_TWO));
+            gameContext.getSnakeByBlock(Block.SNAKE_TWO).orElseThrow());
         case HEADS_BUTT -> {}
       }
     }

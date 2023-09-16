@@ -3,23 +3,29 @@ package com.sampaio.hiroshi.nibbles.core;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
-@RequiredArgsConstructor(staticName = "of")
 @Getter
+@RequiredArgsConstructor(staticName = "of")
+@ToString
 public class SnakeMovement {
-  private final Block snakeBlock;
+  private final Snake snake;
   private final Point pointToSetAsSnake;
   private final Point pointToSetAsEmpty;
 
-  public boolean sameSnakeBlock(final SnakeMovement other) {
-    return snakeBlock == other.snakeBlock;
+  public Block getSnakeBlock() {
+    return snake.getSnakeBlock();
+  }
+
+  public boolean sameSnake(final SnakeMovement other) {
+    return this.snake == other.snake || this.getSnakeBlock() == other.getSnakeBlock();
   }
 
   public boolean samePointToSetAsSnake(final SnakeMovement other) {
     return Objects.equals(pointToSetAsSnake, other.pointToSetAsEmpty);
   }
 
-  public boolean differentSnakeBlockButSamePointToSetAsSnake(final SnakeMovement other) {
-    return !sameSnakeBlock(other) && samePointToSetAsSnake(other);
+  public boolean differentSnakeButSamePointToSetAsSnake(final SnakeMovement other) {
+    return !sameSnake(other) && samePointToSetAsSnake(other);
   }
 }

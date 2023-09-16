@@ -12,7 +12,7 @@ public class EventsForeseer {
 
   @NonNull private final SnakeToEventMapper snakeToEventMapper;
 
-  public EnumMap<Block, SnakeMovement> foreseeSnakeMovements(final List<Snake> snakes) {
+  public EnumMap<Block, SnakeMovement> foreseeSnakeMovements(final Collection<Snake> snakes) {
     return snakes.stream()
         .map(Snake::foreseeUpdate)
         .filter(Optional::isPresent)
@@ -42,13 +42,13 @@ public class EventsForeseer {
       final Point pointToSetAsSnake = snakeMovement.getPointToSetAsSnake();
       final Block snakeBlock = snakeMovement.getSnakeBlock();
 
-      final Optional<Block> headButtWithOtherSnake =
+      final Optional<Block> headButtWithOtherSnakeBlock =
           snakeMovements.values().stream()
-              .filter(snakeMovement::differentSnakeBlockButSamePointToSetAsSnake)
+              .filter(snakeMovement::differentSnakeButSamePointToSetAsSnake)
               .map(SnakeMovement::getSnakeBlock)
               .findAny();
 
-      if (headButtWithOtherSnake.isPresent()) events.add(Event.HEADS_BUTT);
+      if (headButtWithOtherSnakeBlock.isPresent()) events.add(Event.HEADS_BUTT);
 
       final Block actualArenaAt = arena.getAt(pointToSetAsSnake.getX(), pointToSetAsSnake.getY());
 
@@ -56,8 +56,8 @@ public class EventsForeseer {
       if ((actualArenaAt == Block.SNAKE_ONE || actualArenaAt == Block.SNAKE_TWO)
           && foreseenEmptyPoints.contains(pointToSetAsSnake)) {
         foreseenArenaAt = Block.EMPTY;
-      } else if (actualArenaAt == Block.EMPTY && headButtWithOtherSnake.isPresent()) {
-        foreseenArenaAt = headButtWithOtherSnake.get();
+      } else if (actualArenaAt == Block.EMPTY && headButtWithOtherSnakeBlock.isPresent()) {
+        foreseenArenaAt = headButtWithOtherSnakeBlock.get();
       } else {
         foreseenArenaAt = actualArenaAt;
       }

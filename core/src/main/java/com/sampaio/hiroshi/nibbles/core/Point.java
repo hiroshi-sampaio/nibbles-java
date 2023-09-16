@@ -4,12 +4,13 @@ import lombok.*;
 
 @Getter
 @Setter
+@ToString(onlyExplicitlyIncluded = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, doNotUseGetters = true)
-@AllArgsConstructor(staticName = "of", access = AccessLevel.PROTECTED)
+@RequiredArgsConstructor(staticName = "of", access = AccessLevel.PROTECTED)
 public class Point {
 
-  @EqualsAndHashCode.Include private final int x;
-  @EqualsAndHashCode.Include private final int y;
+  @ToString.Include @EqualsAndHashCode.Include private final int x;
+  @ToString.Include @EqualsAndHashCode.Include private final int y;
   private final Direction direction;
   private final FieldMeasures fieldMeasures;
 

@@ -4,18 +4,22 @@ import com.sampaio.hiroshi.nibbles.core.driven.GameEventListener;
 import com.sampaio.hiroshi.nibbles.core.driving.GameInputListener;
 import java.util.EnumMap;
 import java.util.EnumSet;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
-@RequiredArgsConstructor
+@Builder
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class Game implements GameInputListener {
 
   public static final long NANOS_PER_MILLI = 1000_000L;
   public static final long NANOS_PER_SECOND = 1000_000_000L;
 
   private final int fps;
-  @NonNull private final GameContext gameContext;
+  @Getter @NonNull private final GameContext gameContext;
   @NonNull private final EventsForeseer eventsForeseer;
   @NonNull private final GameEventListener eventListener;
   @NonNull private final Orchestrator orchestrator;
@@ -32,11 +36,15 @@ public class Game implements GameInputListener {
 
       final EnumMap<Block, SnakeMovement> snakeMovements =
           eventsForeseer.foreseeSnakeMovements(gameContext.getSnakes());
+
+      eventListener.snakeMovementsForeseen(snakeMovements);
+
       final EnumSet<Event> events =
           eventsForeseer.foreseeEventsOnArena(snakeMovements, gameContext.getArena());
-      orchestrator.handleEvents(events, snakeMovements);
 
-      System.out.println("events = " + events);
+      eventListener.eventsForeseen(events);
+
+      orchestrator.handleEvents(events, snakeMovements);
 
       if (!events.isEmpty()) eventListener.arenaUpdated(gameContext.getArena());
 
@@ -59,65 +67,41 @@ public class Game implements GameInputListener {
 
   @Override
   public void upSnakeOne() {
-    if (!gameContext.getSnakes().isEmpty()) {
-      final Snake snake = gameContext.getSnakes().get(0);
-      snake.turnUp();
-    }
+    gameContext.getSnakeByBlock(Block.SNAKE_ONE).ifPresent(Snake::turnUp);
   }
 
   @Override
   public void downSnakeOne() {
-    if (!gameContext.getSnakes().isEmpty()) {
-      final Snake snake = gameContext.getSnakes().get(0);
-      snake.turnDown();
-    }
+    gameContext.getSnakeByBlock(Block.SNAKE_ONE).ifPresent(Snake::turnDown);
   }
 
   @Override
   public void leftSnakeOne() {
-    if (!gameContext.getSnakes().isEmpty()) {
-      final Snake snake = gameContext.getSnakes().get(0);
-      snake.turnLeft();
-    }
+    gameContext.getSnakeByBlock(Block.SNAKE_ONE).ifPresent(Snake::turnLeft);
   }
 
   @Override
   public void rightSnakeOne() {
-    if (!gameContext.getSnakes().isEmpty()) {
-      final Snake snake = gameContext.getSnakes().get(0);
-      snake.turnRight();
-    }
+    gameContext.getSnakeByBlock(Block.SNAKE_ONE).ifPresent(Snake::turnRight);
   }
 
   @Override
   public void upSnakeTwo() {
-    if (gameContext.getSnakes().size() >= 2) {
-      final Snake snake = gameContext.getSnakes().get(1);
-      snake.turnUp();
-    }
+    gameContext.getSnakeByBlock(Block.SNAKE_TWO).ifPresent(Snake::turnUp);
   }
 
   @Override
   public void downSnakeTwo() {
-    if (gameContext.getSnakes().size() >= 2) {
-      final Snake snake = gameContext.getSnakes().get(1);
-      snake.turnDown();
-    }
+    gameContext.getSnakeByBlock(Block.SNAKE_TWO).ifPresent(Snake::turnDown);
   }
 
   @Override
   public void leftSnakeTwo() {
-    if (gameContext.getSnakes().size() >= 2) {
-      final Snake snake = gameContext.getSnakes().get(1);
-      snake.turnLeft();
-    }
+    gameContext.getSnakeByBlock(Block.SNAKE_TWO).ifPresent(Snake::turnLeft);
   }
 
   @Override
   public void rightSnakeTwo() {
-    if (gameContext.getSnakes().size() >= 2) {
-      final Snake snake = gameContext.getSnakes().get(1);
-      snake.turnRight();
-    }
+    gameContext.getSnakeByBlock(Block.SNAKE_TWO).ifPresent(Snake::turnRight);
   }
 }

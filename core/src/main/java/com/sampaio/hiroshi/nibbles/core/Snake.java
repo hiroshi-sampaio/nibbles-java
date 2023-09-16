@@ -3,13 +3,12 @@ package com.sampaio.hiroshi.nibbles.core;
 import static java.util.Objects.nonNull;
 
 import java.util.*;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
+import lombok.*;
 
+@ToString(onlyExplicitlyIncluded = true)
 public class Snake {
-  @Getter private final Block snakeBlock;
-  @Getter private final String name;
+  @ToString.Include @Getter private final Block snakeBlock;
+  @ToString.Include @Getter private final String name;
   private final Deque<Point> tail;
   private Direction direction;
   private int length;
@@ -17,7 +16,8 @@ public class Snake {
   private int countDownToMove;
   @Getter @Setter private boolean alive = true;
 
-  public Snake(
+  @Builder
+  private Snake(
       @NonNull final Block snakeBlock,
       @NonNull final String name,
       @NonNull final Point initialPosition,
@@ -43,6 +43,19 @@ public class Snake {
 
   public Iterable<Point> snakePoints() {
     return tail;
+  }
+
+  public Point getHead() {
+    return tail.getFirst();
+  }
+
+  public boolean contains(final Point point) {
+    return tail.contains(point);
+  }
+
+  public void grow(final Point point) {
+    tail.addLast(point);
+    length++;
   }
 
   public Optional<SnakeMovement> foreseeUpdate() {
@@ -73,10 +86,10 @@ public class Snake {
 
     if (length == tail.size()) {
       final Point tailLastPoint = tail.getLast();
-      return SnakeMovement.of(snakeBlock, nextHeadPoint, tailLastPoint);
+      return SnakeMovement.of(this, nextHeadPoint, tailLastPoint);
     }
 
-    return SnakeMovement.of(snakeBlock, nextHeadPoint, null);
+    return SnakeMovement.of(this, nextHeadPoint, null);
   }
 
   public void doUpdate(final SnakeMovement snakeMovement) {
