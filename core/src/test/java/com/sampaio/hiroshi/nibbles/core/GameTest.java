@@ -6,7 +6,8 @@ import org.junit.jupiter.api.Test;
 
 public class GameTest {
 
-  private final LevelHelper levelHelper = new LevelHelper();
+  private final BlockCharMapper blockCharMapper = new BlockCharMapper();
+  private final LevelHelper levelHelper = new LevelHelper(blockCharMapper);
 
   @Test
   void snake3pointsLongGoingToTheRightAndBumpingIntoWall() {
@@ -27,7 +28,7 @@ public class GameTest {
         Game.builder()
             .fps(Integer.MAX_VALUE)
             .gameContext(gameContext)
-            .eventListener(new GameEventListenerForTesting())
+            .eventListener(new GameEventListenerForTesting(blockCharMapper))
             .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
             .orchestrator(new Orchestrator(gameContext))
             .build();

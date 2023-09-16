@@ -3,10 +3,12 @@ package com.sampaio.hiroshi.nibbles.core;
 import com.sampaio.hiroshi.nibbles.core.driven.GameEventListener;
 import java.util.EnumMap;
 import java.util.EnumSet;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class GameEventListenerForTesting implements GameEventListener {
 
-  final BlockCharMapper blockCharMapper = new BlockCharMapper();
+  final BlockCharMapper blockCharMapper;
 
   @Override
   public void arenaUpdated(Arena arena) {

@@ -3,10 +3,12 @@ package com.sampaio.hiroshi.nibbles.core;
 import java.io.StringReader;
 import java.util.*;
 import java.util.function.Predicate;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class LevelHelper {
 
-  final BlockCharMapper mapper = new BlockCharMapper();
+  final BlockCharMapper mapper;
 
   public Arena createArena(final String arenaFieldAsText) {
     final List<String> fieldLines = readFieldLines(arenaFieldAsText);
