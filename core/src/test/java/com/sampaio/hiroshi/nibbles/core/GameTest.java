@@ -301,4 +301,55 @@ public class GameTest {
         .contains(
             EnumSet.of(Event.SNAKE_TWO_BUMPS_INTO_SNAKE_ONE, Event.SNAKE_ONE_BUMPS_INTO_SNAKE_TWO));
   }
+
+  @Test
+  void headButtCrossingWhileFoodEating() {
+
+    final GameContext gameContext =
+        levelHelper.createGameContext(
+            """
+                    #######################
+                    #          1          #
+                    #          1          #
+                    #          1          #
+                    #          A          #
+                    #                     #
+                    #                     #
+                    #   2222B  F          #
+                    #######################
+                    """);
+
+    final Game game =
+        Game.builder()
+            .fps(Integer.MAX_VALUE)
+            .gameContext(gameContext)
+            .eventListener(gameEventListenerForTesting)
+            .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
+            .orchestrator(new Orchestrator(gameContext))
+            .build();
+
+    game.gameLoop();
+
+    assertThat(gameEventListenerForTesting.getFrameHistory())
+        .contains(
+            """
+                        #######################
+                        #                     #
+                        #                     #
+                        #          1          #
+                        #          1          #
+                        #          1          #
+                        #          A          #
+                        #     2222BF          #
+                        #######################
+                        """);
+
+    assertThat(gameEventListenerForTesting.getForeseenEventsHistory())
+        .contains(
+            EnumSet.of(
+                Event.SNAKE_TWO_BUMPS_INTO_SNAKE_ONE,
+                Event.SNAKE_ONE_BUMPS_INTO_SNAKE_TWO,
+                Event.SNAKE_ONE_EATS,
+                Event.SNAKE_TWO_EATS));
+  }
 }
