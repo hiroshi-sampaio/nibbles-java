@@ -1,6 +1,6 @@
 package com.sampaio.hiroshi.nibbles.core;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
@@ -8,6 +8,8 @@ public class GameTest {
 
   private final BlockCharMapper blockCharMapper = new BlockCharMapper();
   private final LevelHelper levelHelper = new LevelHelper(blockCharMapper);
+  private final GameEventListenerForTesting gameEventListenerForTesting =
+      new GameEventListenerForTesting(blockCharMapper);
 
   @Test
   void snake3pointsLongGoingToTheRightAndBumpingIntoWall() {
@@ -15,36 +17,119 @@ public class GameTest {
     final GameContext gameContext =
         levelHelper.createGameContext(
             """
-                        #########
-                        #       #
-                        #11A    #
-                        #       #
-                        #########
-                        """,
-            Direction.RIGHT,
-            Direction.LEFT);
+                #########
+                #       #
+                #11A    #
+                #       #
+                #########
+                """);
 
     final Game game =
         Game.builder()
             .fps(Integer.MAX_VALUE)
             .gameContext(gameContext)
-            .eventListener(new GameEventListenerForTesting(blockCharMapper))
+            .eventListener(gameEventListenerForTesting)
             .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
             .orchestrator(new Orchestrator(gameContext))
             .build();
 
     game.gameLoop();
 
-    final Arena expectedFinalArenaState =
-        levelHelper.createArena(
+    assertThat(gameEventListenerForTesting.getFrameHistory())
+        .contains(
             """
-                        #########
-                        #       #
-                        #    11A#
-                        #       #
-                        #########
-                        """);
+            #########
+            #       #
+            #    11A#
+            #       #
+            #########
+            """);
+  }
 
-    assertEquals(expectedFinalArenaState, game.getGameContext().getArena());
+  @Test
+  void snakesWithSameSpeedInLine() {
+
+    final GameContext gameContext =
+        levelHelper.createGameContext(
+            """
+            ######################
+            #                    #
+            #1111A2222B          #
+            #                    #
+            ######################
+            """);
+
+    final Game game =
+        Game.builder()
+            .fps(Integer.MAX_VALUE)
+            .gameContext(gameContext)
+            .eventListener(gameEventListenerForTesting)
+            .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
+            .orchestrator(new Orchestrator(gameContext))
+            .build();
+
+    game.gameLoop();
+
+    assertThat(gameEventListenerForTesting.getFrameHistory())
+        .contains(
+            """
+            ######################
+            #                    #
+            #          1111A2222B#
+            #                    #
+            ######################
+            """,
+            """
+            ######################
+            #                    #
+            #               1111A#
+            #                    #
+            ######################
+            """);
+  }
+  @Test
+  void snakesRunToTailOfAnotherWhichIsDying() {
+
+    final GameContext gameContext =
+        levelHelper.createGameContext(
+            """
+            #######################
+            #                     #
+            #         1           #
+            #         1           #
+            #    2222B1           #
+            #         1           #
+            #         1           #
+            #         A           #
+            #######################
+            """);
+
+    final Game game =
+        Game.builder()
+            .fps(Integer.MAX_VALUE)
+            .gameContext(gameContext)
+            .eventListener(gameEventListenerForTesting)
+            .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
+            .orchestrator(new Orchestrator(gameContext))
+            .build();
+
+    game.gameLoop();
+
+    assertThat(gameEventListenerForTesting.getFrameHistory())
+        .contains(
+            """
+            ######################
+            #                    #
+            #          1111A2222B#
+            #                    #
+            ######################
+            """,
+            """
+            ######################
+            #                    #
+            #               1111A#
+            #                    #
+            ######################
+            """);
   }
 }

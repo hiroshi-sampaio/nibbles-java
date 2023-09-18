@@ -1,5 +1,7 @@
 package com.sampaio.hiroshi.nibbles.core;
 
+import static java.util.function.Predicate.not;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -32,19 +34,17 @@ public class EventsForeseer {
 
     final EnumSet<Event> events = EnumSet.noneOf(Event.class);
 
-    final List<Point> foreseenEmptyPoints =
-        snakeMovements.values().stream()
-            .map(SnakeMovement::getPointToSetAsEmpty)
-            .filter(Objects::nonNull)
-            .toList();
+    final List<Point> foreseenEmptyPoints = getForeseenEmptyPoints(snakeMovements);
 
     for (final SnakeMovement snakeMovement : snakeMovements.values()) {
-      final Point pointToSetAsSnake = snakeMovement.getPointToSetAsSnake();
+      final Point pointToSetAsSnake = snakeMovement.getNextHead();
       final Block snakeBlock = snakeMovement.getSnakeBlock();
 
+      // Limits to headbutt between two snakes only (must be changed if add more snakes)
       final Optional<Block> headButtWithOtherSnakeBlock =
           snakeMovements.values().stream()
-              .filter(snakeMovement::differentSnakeButSamePointToSetAsSnake)
+              .filter(not(snakeMovement::sameSnakeBlockAs))
+              .filter(snakeMovement::samePointToSetAsSnake)
               .map(SnakeMovement::getSnakeBlock)
               .findAny();
 
@@ -75,5 +75,13 @@ public class EventsForeseer {
     }
 
     return events;
+  }
+
+  private static List<Point> getForeseenEmptyPoints(
+      final EnumMap<Block, SnakeMovement> snakeMovements) {
+    return snakeMovements.values().stream()
+        .map(SnakeMovement::getCurrentTailTip)
+        .filter(Objects::nonNull)
+        .toList();
   }
 }

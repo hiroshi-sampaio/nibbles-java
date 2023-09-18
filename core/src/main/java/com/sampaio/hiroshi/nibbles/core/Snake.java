@@ -10,7 +10,7 @@ public class Snake {
   @ToString.Include @Getter private final Block snakeBlock;
   @ToString.Include @Getter private final String name;
   private final Deque<Point> tail;
-  private Direction direction;
+  @Setter private Direction direction;
   private int length;
   private int speed;
   private int countDownToMove;
@@ -21,6 +21,7 @@ public class Snake {
       @NonNull final Block snakeBlock,
       @NonNull final String name,
       @NonNull final Point initialPosition,
+      @NonNull final Direction initialDirection,
       final int initialLength,
       final int initialSpeed) {
 
@@ -35,7 +36,7 @@ public class Snake {
     this.snakeBlock = snakeBlock;
     this.name = name;
     this.tail = new LinkedList<>(Collections.singletonList(initialPosition));
-    this.direction = initialPosition.getDirection();
+    this.direction = initialDirection;
     this.length = initialLength;
     this.speed = initialSpeed;
     this.countDownToMove = this.speed;
@@ -73,7 +74,7 @@ public class Snake {
     return Optional.empty();
   }
 
-  private SnakeMovement foreseeMovement() {
+  public SnakeMovement foreseeMovement() {
     final Point currentHeadPoint = tail.getFirst();
 
     final Point nextHeadPoint =
@@ -85,16 +86,16 @@ public class Snake {
         };
 
     if (length == tail.size()) {
-      final Point tailLastPoint = tail.getLast();
-      return SnakeMovement.of(this, nextHeadPoint, tailLastPoint);
+      final Point tailTipPoint = tail.getLast();
+      return SnakeMovement.of(this, nextHeadPoint,  tailTipPoint);
     }
 
-    return SnakeMovement.of(this, nextHeadPoint, null);
+    return SnakeMovement.of(this, nextHeadPoint,  null);
   }
 
-  public void doUpdate(final SnakeMovement snakeMovement) {
-    tail.addFirst(snakeMovement.getPointToSetAsSnake());
-    if (nonNull(snakeMovement.getPointToSetAsEmpty())) {
+  public void executeMovement(final SnakeMovement snakeMovement) {
+    tail.addFirst(snakeMovement.getNextHead());
+    if (nonNull(snakeMovement.getCurrentTailTip())) {
       tail.removeLast();
     }
   }
@@ -107,19 +108,23 @@ public class Snake {
     speed += factor;
   }
 
+  private void ifAbleTurnTo(final Direction direction) {
+    if (this.direction != direction.opposite()) this.direction = direction;
+  }
+
   public void turnUp() {
-    if (direction != Direction.DOWN) direction = Direction.UP;
+    ifAbleTurnTo(Direction.UP);
   }
 
   public void turnRight() {
-    if (direction != Direction.LEFT) direction = Direction.RIGHT;
+    ifAbleTurnTo(Direction.RIGHT);
   }
 
   public void turnDown() {
-    if (direction != Direction.UP) direction = Direction.DOWN;
+    ifAbleTurnTo(Direction.DOWN);
   }
 
   public void turnLeft() {
-    if (direction != Direction.RIGHT) direction = Direction.LEFT;
+    ifAbleTurnTo(Direction.LEFT);
   }
 }

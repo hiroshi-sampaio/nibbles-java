@@ -16,6 +16,14 @@ public class BlockCharMapper {
       case SNAKE_TWO -> '2';
     };
   }
+  
+  public Character mapToHead(final Block block) {
+    return switch (block) {
+      case SNAKE_ONE -> 'A';
+      case SNAKE_TWO -> 'B';
+      default -> throw new IllegalStateException("Unexpected value: " + block);
+    };
+  }
 
   public Block map(final Character character) {
     return switch (character) {
@@ -29,11 +37,11 @@ public class BlockCharMapper {
   }
 
   public boolean isSnakeOneHead(final Character character) {
-    return character == SNAKE_ONE_HEAD;
+    return character == 'A';
   }
 
   public boolean isSnakeTwoHead(final Character character) {
-    return character == SNAKE_TWO_HEAD;
+    return character == 'B';
   }
 
   public boolean isSnakeHead(final Character character) {

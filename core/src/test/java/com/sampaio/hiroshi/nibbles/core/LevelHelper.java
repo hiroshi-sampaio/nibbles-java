@@ -1,8 +1,9 @@
 package com.sampaio.hiroshi.nibbles.core;
 
+import static java.util.function.Predicate.not;
+
 import java.io.StringReader;
 import java.util.*;
-import java.util.function.Predicate;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -17,14 +18,11 @@ public class LevelHelper {
 
     final Arena arena = FieldMeasures.of(width, height).arenaOf();
 
-    fillArena(fieldLines, arena);
+    fillArenaFieldAndGetSnakeHeads(fieldLines, arena);
     return arena;
   }
 
-  public GameContext createGameContext(
-      final String arenaFieldAsText,
-      final Direction snakeOneDirection,
-      final Direction snakeTwoDirection) {
+  public GameContext createGameContext(final String arenaFieldAsText) {
 
     final List<String> fieldLines = readFieldLines(arenaFieldAsText);
 
@@ -33,13 +31,9 @@ public class LevelHelper {
 
     final Arena arena = FieldMeasures.of(width, height).arenaOf();
 
-    fillArena(fieldLines, arena);
+    final EnumMap<Block, Point> snakeHeads = fillArenaFieldAndGetSnakeHeads(fieldLines, arena);
 
-    final EnumMap<Block, Snake> blockSnakeEnumMap =
-        createSnakesHeads(
-            fieldLines, arena.getFieldMeasures(), snakeOneDirection, snakeTwoDirection);
-
-    extendSnakeTailsIfNeeded(arena, blockSnakeEnumMap.values());
+    final EnumMap<Block, Snake> blockSnakeEnumMap = createSnakes(arena, snakeHeads);
 
     return GameContext.of(arena, blockSnakeEnumMap);
   }
@@ -56,9 +50,12 @@ public class LevelHelper {
     return lines;
   }
 
-  private void fillArena(final List<String> fieldLines, final Arena arena) {
+  private EnumMap<Block, Point> fillArenaFieldAndGetSnakeHeads(
+      final List<String> arenaFieldLines, final Arena arena) {
+    final EnumMap<Block, Point> snakeHeadsMap = new EnumMap<>(Block.class);
+
     for (int y = 0; y < arena.getFieldMeasures().getHeight(); y++) {
-      final String line = fieldLines.get(y);
+      final String line = arenaFieldLines.get(y);
       final char[] charArray = line.toCharArray();
 
       for (int x = 0; x < charArray.length; x++) {
@@ -66,67 +63,76 @@ public class LevelHelper {
         final Block block = mapper.map(ch);
 
         arena.setBlockAt(x, y, block);
-      }
-    }
-  }
-
-  private EnumMap<Block, Snake> createSnakesHeads(
-      final List<String> fieldLines,
-      final FieldMeasures fieldMeasures,
-      final Direction snakeOneDirection,
-      final Direction snakeTwoDirection) {
-
-    final EnumMap<Block, Snake> blockSnakeEnumMap = new EnumMap<>(Block.class);
-
-    for (int y = 0; y < fieldMeasures.getHeight(); y++) {
-      final String line = fieldLines.get(y);
-      final char[] charArray = line.toCharArray();
-
-      for (int x = 0; x < charArray.length; x++) {
-        final char ch = charArray[x];
-        final Block block = mapper.map(ch);
 
         if (mapper.isSnakeHead(ch)) {
-          blockSnakeEnumMap.put(
-              block,
-              Snake.builder()
-                  .snakeBlock(block)
-                  .name(block == Block.SNAKE_ONE ? "Sammy" : "Jake")
-                  .initialLength(1)
-                  .initialSpeed(1)
-                  .initialPosition(
-                      fieldMeasures.pointOf(
-                          x, y, block == Block.SNAKE_ONE ? snakeOneDirection : snakeTwoDirection))
-                  .build());
+          snakeHeadsMap.put(block, arena.getFieldMeasures().pointOf(x, y));
         }
       }
     }
 
-    return blockSnakeEnumMap;
+    return snakeHeadsMap;
   }
 
-  private static void extendSnakeTailsIfNeeded(final Arena arena, final Collection<Snake> snakes) {
-    for (final Snake snake : snakes) {
+  private static EnumMap<Block, Snake> createSnakes(
+      final Arena arena, final EnumMap<Block, Point> snakeHeads) {
+
+    final EnumMap<Block, Snake> blockSnakeEnumMap = new EnumMap<>(Block.class);
+
+    for (final Map.Entry<Block, Point> snakeHead : snakeHeads.entrySet()) {
+
+      final Block block = snakeHead.getKey();
+      final Point headPoint = snakeHead.getValue();
+
+      final Snake snake =
+          Snake.builder()
+              .snakeBlock(block)
+              .name(block == Block.SNAKE_ONE ? "Sammy" : "Jake")
+              .initialLength(1)
+              .initialSpeed(1)
+              .initialPosition(headPoint)
+              .initialDirection(block == Block.SNAKE_ONE ? Direction.RIGHT : Direction.LEFT)
+              .build();
+
+      blockSnakeEnumMap.put(block, snake);
+
       Point currentPoint = snake.getHead();
 
       while (true) {
-        final List<Point> pointsAround =
-            List.of(
-                currentPoint.upperPoint(),
-                currentPoint.rightPoint(),
-                currentPoint.lowerPoint(),
-                currentPoint.leftPoint());
+        final Point upperPoint = currentPoint.upperPoint();
+        final Point rightPoint = currentPoint.rightPoint();
+        final Point lowerPoint = currentPoint.lowerPoint();
+        final Point leftPoint = currentPoint.leftPoint();
 
-        final Optional<Point> nextTailPoint =
+        final List<Point> pointsAround = List.of(upperPoint, rightPoint, lowerPoint, leftPoint);
+
+        final Optional<Point> nextTailPointOptional =
             pointsAround.stream()
                 .filter(point -> snake.getSnakeBlock() == arena.getAt(point))
-                .filter(Predicate.not(snake::contains))
+                .filter(not(snake::contains))
                 .findAny();
 
-        if (nextTailPoint.isEmpty()) break;
-        currentPoint = nextTailPoint.get();
-        snake.grow(currentPoint);
+        if (nextTailPointOptional.isEmpty()) break;
+        final Point nextTailPoint = nextTailPointOptional.get();
+
+        if (snake.getHead().equals(currentPoint)) {
+          final Direction relativeDirection;
+          if (nextTailPoint.equals(upperPoint)) {
+            relativeDirection = Direction.UP;
+          } else if (nextTailPoint.equals(rightPoint)) {
+            relativeDirection = Direction.RIGHT;
+          } else if (nextTailPoint.equals(lowerPoint)) {
+            relativeDirection = Direction.DOWN;
+          } else {
+            relativeDirection = Direction.LEFT;
+          }
+          snake.setDirection(relativeDirection.opposite());
+        }
+
+        snake.grow(nextTailPoint);
+        currentPoint = nextTailPoint;
       }
     }
+
+    return blockSnakeEnumMap;
   }
 }

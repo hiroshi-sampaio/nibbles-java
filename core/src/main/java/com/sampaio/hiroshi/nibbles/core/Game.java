@@ -29,6 +29,7 @@ public class Game implements GameInputListener {
     final long nanosPerFrame = NANOS_PER_SECOND / fps;
 
     orchestrator.setInitialGameState();
+    eventListener.initialGameContextSet(gameContext);
     eventListener.arenaUpdated(gameContext.getArena());
 
     while (anySnakeAlive()) {

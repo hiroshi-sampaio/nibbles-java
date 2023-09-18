@@ -1,6 +1,5 @@
 package com.sampaio.hiroshi.nibbles.core;
 
-import java.util.Objects;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -10,22 +9,24 @@ import lombok.ToString;
 @ToString
 public class SnakeMovement {
   private final Snake snake;
-  private final Point pointToSetAsSnake;
-  private final Point pointToSetAsEmpty;
+  private final Point nextHead;
+  private final Point currentTailTip;
 
   public Block getSnakeBlock() {
     return snake.getSnakeBlock();
   }
 
-  public boolean sameSnake(final SnakeMovement other) {
-    return this.snake == other.snake || this.getSnakeBlock() == other.getSnakeBlock();
+  public boolean sameSnakeBlockAs(final SnakeMovement other) {
+    return this == other
+        || this.snake == other.snake
+        || this.snake.getSnakeBlock() == other.snake.getSnakeBlock();
   }
 
   public boolean samePointToSetAsSnake(final SnakeMovement other) {
-    return Objects.equals(pointToSetAsSnake, other.pointToSetAsEmpty);
+    return this == other || this.nextHead.equals(other.nextHead);
   }
 
-  public boolean differentSnakeButSamePointToSetAsSnake(final SnakeMovement other) {
-    return !sameSnake(other) && samePointToSetAsSnake(other);
+  public void execute() {
+    snake.executeMovement(this);
   }
 }
