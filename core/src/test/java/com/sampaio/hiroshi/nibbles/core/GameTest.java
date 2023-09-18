@@ -87,20 +87,21 @@ public class GameTest {
             ######################
             """);
   }
+
   @Test
-  void snakesRunToTailOfAnotherWhichIsDying() {
+  void snakesRunToTailOfAnotherWhichIsGoingToRunIntoWall() {
 
     final GameContext gameContext =
         levelHelper.createGameContext(
             """
             #######################
             #                     #
-            #         1           #
-            #         1           #
-            #    2222B1           #
-            #         1           #
-            #         1           #
-            #         A           #
+            #          1          #
+            #          1          #
+            #    2222B 1          #
+            #          1          #
+            #          1          #
+            #          A          #
             #######################
             """);
 
@@ -118,18 +119,15 @@ public class GameTest {
     assertThat(gameEventListenerForTesting.getFrameHistory())
         .contains(
             """
-            ######################
-            #                    #
-            #          1111A2222B#
-            #                    #
-            ######################
-            """,
-            """
-            ######################
-            #                    #
-            #               1111A#
-            #                    #
-            ######################
+            #######################
+            #                     #
+            #                     #
+            #                     #
+            #                2222B#
+            #                     #
+            #                     #
+            #                     #
+            #######################
             """);
   }
 }
