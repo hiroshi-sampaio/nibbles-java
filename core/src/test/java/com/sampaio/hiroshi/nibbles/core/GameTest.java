@@ -130,4 +130,47 @@ public class GameTest {
             #######################
             """);
   }
+
+  @Test
+  void sammyRunsIntoWallAndJakeBumpsIntoSammy() {
+
+    final GameContext gameContext =
+        levelHelper.createGameContext(
+            """
+            #######################
+            #                     #
+            #          1          #
+            #          1          #
+            #    2222B 1          #
+            #          1          #
+            #          A          #
+            #                     #
+            #######################
+            """);
+
+    final Game game =
+        Game.builder()
+            .fps(Integer.MAX_VALUE)
+            .gameContext(gameContext)
+            .eventListener(gameEventListenerForTesting)
+            .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
+            .orchestrator(new Orchestrator(gameContext))
+            .build();
+
+    game.gameLoop();
+
+    assertThat(gameEventListenerForTesting.getFrameHistory())
+        .contains(
+            """
+            #######################
+            #                     #
+            #                     #
+            #                     #
+            #                2222B#
+            #                     #
+            #                     #
+            #                     #
+            #######################
+            """);
+  }
 }

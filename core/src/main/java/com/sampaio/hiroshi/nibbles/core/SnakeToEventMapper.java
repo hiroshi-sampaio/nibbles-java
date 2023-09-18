@@ -29,14 +29,14 @@ public class SnakeToEventMapper {
   public Event mapToHitSnakeOne(final Block snakeBlock) {
     return switch (snakeBlock) {
       case SNAKE_ONE -> Event.SNAKE_ONE_TRIPS_ON_ITSELF;
-      case SNAKE_TWO -> Event.SNAKE_ONE_BUMPS_INTO_SNAKE_TWO;
+      case SNAKE_TWO -> Event.SNAKE_TWO_BUMPS_INTO_SNAKE_ONE;
       default -> throw new IllegalStateException("Unexpected value: " + snakeBlock);
     };
   }
 
   public Event mapToHitSnakeTwo(final Block snakeBlock) {
     return switch (snakeBlock) {
-      case SNAKE_ONE -> Event.SNAKE_TWO_BUMPS_INTO_SNAKE_ONE;
+      case SNAKE_ONE -> Event.SNAKE_ONE_BUMPS_INTO_SNAKE_TWO;
       case SNAKE_TWO -> Event.SNAKE_TWO_TRIPS_ON_ITSELF;
       default -> throw new IllegalStateException("Unexpected value: " + snakeBlock);
     };
