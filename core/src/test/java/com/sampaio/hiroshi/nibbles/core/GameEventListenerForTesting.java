@@ -1,10 +1,7 @@
 package com.sampaio.hiroshi.nibbles.core;
 
 import com.sampaio.hiroshi.nibbles.core.driven.GameEventListener;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.List;
+import java.util.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -13,11 +10,15 @@ public class GameEventListenerForTesting implements GameEventListener {
 
   final BlockCharMapper blockCharMapper;
   GameContext gameContext;
-  @Getter final List<String> frameHistory = new ArrayList<>();
+  @Getter final Deque<String> frameHistory = new ArrayDeque<>();
+  @Getter final Deque<EnumSet<Event>> foreseenEventsHistory = new ArrayDeque<>();
+  @Getter final Deque<EnumMap<Block, SnakeMovement>> foreseenMovementsHistory = new ArrayDeque<>();
 
   @Override
   public void initialGameContextSet(final GameContext gameContext) {
     frameHistory.clear();
+    foreseenEventsHistory.clear();
+    foreseenMovementsHistory.clear();
     this.gameContext = gameContext;
   }
 
@@ -28,10 +29,11 @@ public class GameEventListenerForTesting implements GameEventListener {
       for (int x = 0; x < arena.getFieldMeasures().getWidth(); x++) {
         final Block arenaAt = arena.getAt(x, y);
         final Character mapped = blockCharMapper.map(arenaAt);
+        final Point point = gameContext.getArena().getFieldMeasures().pointOf(x, y);
         if (gameContext
             .getSnakeByBlock(arenaAt)
             .map(Snake::getHead)
-            .filter(gameContext.getArena().getFieldMeasures().pointOf(x, y)::equals)
+            .filter(point::equals)
             .isPresent()) {
           frameSb.append(blockCharMapper.mapToHead(arenaAt));
         } else {
@@ -46,12 +48,14 @@ public class GameEventListenerForTesting implements GameEventListener {
   }
 
   @Override
-  public void eventsForeseen(final EnumSet<Event> events) {
-    System.out.println("eventsForeseen = " + events);
+  public void snakeMovementsForeseen(final EnumMap<Block, SnakeMovement> snakeMovements) {
+    foreseenMovementsHistory.add(snakeMovements);
+    System.out.println("snakeMovementsForeseen = " + snakeMovements);
   }
 
   @Override
-  public void snakeMovementsForeseen(final EnumMap<Block, SnakeMovement> snakeMovements) {
-    System.out.println("snakeMovementsForeseen = " + snakeMovements);
+  public void eventsForeseen(final EnumSet<Event> events) {
+    foreseenEventsHistory.add(events);
+    System.out.println("eventsForeseen = " + events);
   }
 }

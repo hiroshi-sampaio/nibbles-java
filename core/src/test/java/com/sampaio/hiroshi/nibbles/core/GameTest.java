@@ -2,6 +2,7 @@ package com.sampaio.hiroshi.nibbles.core;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.EnumSet;
 import org.junit.jupiter.api.Test;
 
 public class GameTest {
@@ -44,6 +45,9 @@ public class GameTest {
             #       #
             #########
             """);
+
+    assertThat(gameEventListenerForTesting.getForeseenEventsHistory())
+        .contains(EnumSet.of(Event.SNAKE_ONE_RUNS_INTO_WALL));
   }
 
   @Test
@@ -86,6 +90,11 @@ public class GameTest {
             #                    #
             ######################
             """);
+
+    assertThat(gameEventListenerForTesting.getForeseenEventsHistory())
+        .contains(
+            EnumSet.of(Event.SNAKE_TWO_RUNS_INTO_WALL, Event.SNAKE_ONE_SLITHERS),
+            EnumSet.of(Event.SNAKE_ONE_RUNS_INTO_WALL));
   }
 
   @Test
@@ -95,13 +104,13 @@ public class GameTest {
         levelHelper.createGameContext(
             """
             #######################
-            #                     #
             #          1          #
             #          1          #
             #    2222B 1          #
             #          1          #
             #          1          #
             #          A          #
+            #                     #
             #######################
             """);
 
@@ -116,30 +125,19 @@ public class GameTest {
 
     game.gameLoop();
 
-    assertThat(gameEventListenerForTesting.getFrameHistory())
-        .contains(
-            """
-            #######################
-            #                     #
-            #                     #
-            #                     #
-            #                2222B#
-            #                     #
-            #                     #
-            #                     #
-            #######################
-            """);
+    assertThat(gameEventListenerForTesting.getForeseenEventsHistory())
+        .contains(EnumSet.of(Event.SNAKE_ONE_RUNS_INTO_WALL, Event.SNAKE_TWO_BUMPS_INTO_SNAKE_ONE));
   }
 
   @Test
-  void sammyRunsIntoWallAndJakeBumpsIntoSammy() {
+  void crossingBothGoerIntoWall() {
 
     final GameContext gameContext =
         levelHelper.createGameContext(
             """
             #######################
             #                     #
-            #          1          #
+            #                     #
             #          1          #
             #    2222B 1          #
             #          1          #
@@ -172,5 +170,135 @@ public class GameTest {
             #                     #
             #######################
             """);
+
+    assertThat(gameEventListenerForTesting.getForeseenEventsHistory())
+        .contains(
+            EnumSet.of(Event.SNAKE_ONE_RUNS_INTO_WALL, Event.SNAKE_TWO_SLITHERS),
+            EnumSet.of(Event.SNAKE_TWO_RUNS_INTO_WALL));
+  }
+
+  @Test
+  void headButtCrossing() {
+
+    final GameContext gameContext =
+        levelHelper.createGameContext(
+            """
+            #######################
+            #          1          #
+            #          1          #
+            #          1          #
+            #          A          #
+            #                     #
+            #                     #
+            #   2222B             #
+            #######################
+            """);
+
+    final Game game =
+        Game.builder()
+            .fps(Integer.MAX_VALUE)
+            .gameContext(gameContext)
+            .eventListener(gameEventListenerForTesting)
+            .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
+            .orchestrator(new Orchestrator(gameContext))
+            .build();
+
+    game.gameLoop();
+
+    assertThat(gameEventListenerForTesting.getFrameHistory())
+        .contains(
+            """
+                #######################
+                #                     #
+                #                     #
+                #          1          #
+                #          1          #
+                #          1          #
+                #          A          #
+                #     2222B           #
+                #######################
+                """);
+
+    assertThat(gameEventListenerForTesting.getForeseenEventsHistory())
+        .contains(
+            EnumSet.of(Event.SNAKE_TWO_BUMPS_INTO_SNAKE_ONE, Event.SNAKE_ONE_BUMPS_INTO_SNAKE_TWO));
+  }
+
+  @Test
+  void frontalHeadButtEvenEmptySpacesInBetween() {
+
+    final GameContext gameContext =
+        levelHelper.createGameContext(
+            """
+            #######################
+            #                     #
+            #  2222B      A11111  #
+            #                     #
+            #######################
+            """);
+
+    final Game game =
+        Game.builder()
+            .fps(Integer.MAX_VALUE)
+            .gameContext(gameContext)
+            .eventListener(gameEventListenerForTesting)
+            .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
+            .orchestrator(new Orchestrator(gameContext))
+            .build();
+
+    game.gameLoop();
+
+    assertThat(gameEventListenerForTesting.getFrameHistory())
+        .contains(
+            """
+          #######################
+          #                     #
+          #     2222BA11111     #
+          #                     #
+          #######################
+          """);
+
+    assertThat(gameEventListenerForTesting.getForeseenEventsHistory())
+        .contains(
+            EnumSet.of(Event.SNAKE_TWO_BUMPS_INTO_SNAKE_ONE, Event.SNAKE_ONE_BUMPS_INTO_SNAKE_TWO));
+  }
+
+  @Test
+  void frontalHeadButtOddEmptySpacesInBetween() {
+
+    final GameContext gameContext =
+        levelHelper.createGameContext(
+            """
+            ######################
+            #                    #
+            #  2222B     A11111  #
+            #                    #
+            ######################
+            """);
+
+    final Game game =
+        Game.builder()
+            .fps(Integer.MAX_VALUE)
+            .gameContext(gameContext)
+            .eventListener(gameEventListenerForTesting)
+            .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
+            .orchestrator(new Orchestrator(gameContext))
+            .build();
+
+    game.gameLoop();
+
+    assertThat(gameEventListenerForTesting.getFrameHistory())
+        .contains(
+            """
+            ######################
+            #                    #
+            #    2222B A11111    #
+            #                    #
+            ######################
+            """);
+
+    assertThat(gameEventListenerForTesting.getForeseenEventsHistory())
+        .contains(
+            EnumSet.of(Event.SNAKE_TWO_BUMPS_INTO_SNAKE_ONE, Event.SNAKE_ONE_BUMPS_INTO_SNAKE_TWO));
   }
 }

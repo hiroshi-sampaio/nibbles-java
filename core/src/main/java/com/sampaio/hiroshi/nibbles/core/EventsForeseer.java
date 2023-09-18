@@ -48,8 +48,6 @@ public class EventsForeseer {
               .map(SnakeMovement::getSnakeBlock)
               .findAny();
 
-      if (headButtWithOtherSnakeBlock.isPresent()) events.add(Event.HEADS_BUTT);
-
       final Block actualArenaAt = arena.getAt(pointToSetAsSnake.getX(), pointToSetAsSnake.getY());
 
       final Block foreseenArenaAt;

@@ -9,7 +9,7 @@ public interface GameEventListener {
 
   void arenaUpdated(Arena arena);
 
-  void eventsForeseen(EnumSet<Event> events);
-
   void snakeMovementsForeseen(EnumMap<Block, SnakeMovement> snakeMovements);
+
+  void eventsForeseen(EnumSet<Event> events);
 }

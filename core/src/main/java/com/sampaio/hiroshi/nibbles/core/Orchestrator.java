@@ -39,7 +39,6 @@ public class Orchestrator {
         case SNAKE_TWO_RUNS_INTO_WALL,
             SNAKE_TWO_TRIPS_ON_ITSELF,
             SNAKE_TWO_BUMPS_INTO_SNAKE_ONE -> killSnake(Block.SNAKE_TWO);
-        case HEADS_BUTT -> {}
       }
     }
     updateArena(snakeMovements.values());
@@ -54,9 +53,7 @@ public class Orchestrator {
     }
     for (final SnakeMovement movement : snakeMovement) {
       if (movement.getSnake().isAlive()) {
-        gameContext
-            .getArena()
-            .setBlockAt(movement.getNextHead(), movement.getSnakeBlock());
+        gameContext.getArena().setBlockAt(movement.getNextHead(), movement.getSnakeBlock());
       }
     }
   }
