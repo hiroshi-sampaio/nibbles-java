@@ -308,16 +308,16 @@ public class GameTest {
     final GameContext gameContext =
         levelHelper.createGameContext(
             """
-                    #######################
-                    #          1          #
-                    #          1          #
-                    #          1          #
-                    #          A          #
-                    #                     #
-                    #                     #
-                    #   2222B  F          #
-                    #######################
-                    """);
+                  #######################
+                  #          1          #
+                  #          1          #
+                  #          1          #
+                  #          A          #
+                  #                     #
+                  #                     #
+                  #   2222B  F          #
+                  #######################
+                  """);
 
     final Game game =
         Game.builder()
@@ -333,16 +333,16 @@ public class GameTest {
     assertThat(gameEventListenerForTesting.getFrameHistory())
         .contains(
             """
-                        #######################
-                        #                     #
-                        #                     #
-                        #          1          #
-                        #          1          #
-                        #          1          #
-                        #          A          #
-                        #     2222BF          #
-                        #######################
-                        """);
+            #######################
+            #                     #
+            #                     #
+            #          1          #
+            #          1          #
+            #          1          #
+            #          A          #
+            #     2222BF          #
+            #######################
+            """);
 
     assertThat(gameEventListenerForTesting.getForeseenEventsHistory())
         .contains(
