@@ -52,9 +52,9 @@ public class Game implements GameInputListener {
       final long elapsedNanos = System.nanoTime() - nanoTimeStart;
       if (nanosPerFrame > elapsedNanos) {
         final long remainingNanos = nanosPerFrame - elapsedNanos;
-        final long millis = remainingNanos / NANOS_PER_MILLI;
-        final int nanosPart = (int) (remainingNanos % NANOS_PER_MILLI);
-        Thread.sleep(millis, nanosPart);
+        final long remainingMillis = remainingNanos / NANOS_PER_MILLI;
+        final int nanosPartOfRemainingTime = (int) (remainingNanos % NANOS_PER_MILLI);
+        Thread.sleep(remainingMillis, nanosPartOfRemainingTime);
       }
     }
   }
