@@ -37,39 +37,59 @@ public class EventsForeseer {
     final List<Point> foreseenEmptyPoints = getForeseenEmptyPoints(snakeMovements);
 
     for (final SnakeMovement snakeMovement : snakeMovements.values()) {
-      final Point pointToSetAsSnake = snakeMovement.getNextHead();
+      final Point nextHeadPoint = snakeMovement.getNextHead();
       final Block snakeBlock = snakeMovement.getSnakeBlock();
 
-      // Limits to headbutt between two snakes only (must be changed if add more snakes)
-      final Optional<Block> headButtWithOtherSnakeBlock =
-          snakeMovements.values().stream()
-              .filter(not(snakeMovement::sameSnakeBlockAs))
-              .filter(snakeMovement::samePointToSetAsSnake)
-              .map(SnakeMovement::getSnakeBlock)
-              .findAny();
+      final Block currentBlockAt = arena.getAt(nextHeadPoint);
 
-      final Block actualArenaAt = arena.getAt(pointToSetAsSnake.getX(), pointToSetAsSnake.getY());
-
-      final Block foreseenArenaAt;
-      if ((actualArenaAt == Block.SNAKE_ONE || actualArenaAt == Block.SNAKE_TWO)
-          && foreseenEmptyPoints.contains(pointToSetAsSnake)) {
-        foreseenArenaAt = Block.EMPTY;
-      } else if (actualArenaAt == Block.EMPTY && headButtWithOtherSnakeBlock.isPresent()) {
-        foreseenArenaAt = headButtWithOtherSnakeBlock.get();
+      if (Block.WALL == currentBlockAt) {
+        // It is not expected to have wall removed so there is no point on foreseeing changes on
+        // the point where the head of the snake is going to be.
+        events.add(snakeToEventMapper.mapToRunIntoWallEvent(snakeBlock));
       } else {
-        foreseenArenaAt = actualArenaAt;
+        final EnumSet<Block> foreseenBlocksAt = EnumSet.noneOf(Block.class);
+        if (foreseenEmptyPoints.contains(nextHeadPoint)) {
+          // The point is occupied by the tail tip of some snake but will be empty on next frame so
+          // the current snake can go there
+          foreseenBlocksAt.add(Block.EMPTY);
+        }
+
+        // Which snakes are going to the same point except the current one
+        snakeMovements.values().stream()
+            .filter(not(snakeMovement::sameSnake))
+            .filter(snakeMovement::sameNewHead)
+            .map(SnakeMovement::getSnakeBlock)
+            .forEach(foreseenBlocksAt::add);
+
+        if (currentBlockAt.canWalkOn()) {
+          if (currentBlockAt == Block.FOOD) {
+            events.add(snakeToEventMapper.mapToEatEvent(snakeBlock));
+          }
+          if (foreseenBlocksAt.contains(Block.SNAKE_ONE)) {
+            events.add(snakeToEventMapper.mapToHitSnakeOne(snakeBlock));
+          } else if (foreseenBlocksAt.contains(Block.SNAKE_TWO)) {
+            events.add(snakeToEventMapper.mapToHitSnakeTwo(snakeBlock));
+          } else {
+            events.add(snakeToEventMapper.mapToSlitherEvent(snakeBlock));
+          }
+        } else if (currentBlockAt.isSnake()) {
+          if (foreseenBlocksAt.contains(Block.EMPTY)) {
+            if (foreseenBlocksAt.contains(Block.SNAKE_ONE)) {
+              events.add(snakeToEventMapper.mapToHitSnakeOne(snakeBlock));
+            } else if (foreseenBlocksAt.contains(Block.SNAKE_TWO)) {
+              events.add(snakeToEventMapper.mapToHitSnakeTwo(snakeBlock));
+            } else {
+              events.add(snakeToEventMapper.mapToSlitherEvent(snakeBlock));
+            }
+          } else {
+            if (currentBlockAt == Block.SNAKE_ONE) {
+              events.add(snakeToEventMapper.mapToHitSnakeOne(snakeBlock));
+            } else if (currentBlockAt == Block.SNAKE_TWO) {
+              events.add(snakeToEventMapper.mapToHitSnakeTwo(snakeBlock));
+            }
+          }
+        }
       }
-
-      final Event event =
-          switch (foreseenArenaAt) {
-            case WALL -> snakeToEventMapper.mapToRunIntoWallEvent(snakeBlock);
-            case SNAKE_ONE -> snakeToEventMapper.mapToHitSnakeOne(snakeBlock);
-            case SNAKE_TWO -> snakeToEventMapper.mapToHitSnakeTwo(snakeBlock);
-            case FOOD -> snakeToEventMapper.mapToEatEvent(snakeBlock);
-            case EMPTY -> snakeToEventMapper.mapToSlitherEvent(snakeBlock);
-          };
-
-      events.add(event);
     }
 
     return events;
@@ -78,7 +98,7 @@ public class EventsForeseer {
   private static List<Point> getForeseenEmptyPoints(
       final EnumMap<Block, SnakeMovement> snakeMovements) {
     return snakeMovements.values().stream()
-        .map(SnakeMovement::getCurrentTailTip)
+        .map(SnakeMovement::getTailTipToRemove)
         .filter(Objects::nonNull)
         .toList();
   }

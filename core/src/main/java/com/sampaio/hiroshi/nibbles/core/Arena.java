@@ -32,51 +32,51 @@ public class Arena {
     return getAt(point.getX(), point.getY());
   }
 
-  public void setBlockAt(final int x, final int y, final Block block) {
+  public void setAt(final int x, final int y, final Block block) {
     field[x][y] = block;
   }
 
-  public void setBlockAt(final Point point, final Block block) {
-    setBlockAt(point.getX(), point.getY(), block);
+  public void setAt(final Point point, final Block block) {
+    setAt(point.getX(), point.getY(), block);
   }
 
-  public void setEmptyBlockAt(final int x, final int y) {
-    setBlockAt(x, y, Block.EMPTY);
+  public void setEmptyAt(final int x, final int y) {
+    setAt(x, y, Block.EMPTY);
   }
 
-  public void setEmptyBlockAt(final Point point) {
-    setBlockAt(point, Block.EMPTY);
+  public void setEmptyAt(final Point point) {
+    setAt(point, Block.EMPTY);
   }
 
-  public void setWallBlockAt(final int x, final int y) {
-    setBlockAt(x, y, Block.WALL);
+  public void setWallAt(final int x, final int y) {
+    setAt(x, y, Block.WALL);
   }
 
-  public void setWallBlockAt(final Point point) {
-    setBlockAt(point, Block.WALL);
+  public void setWallAt(final Point point) {
+    setAt(point, Block.WALL);
   }
 
-  public void setFoodBlockAt(final int x, final int y) {
-    setBlockAt(x, y, Block.FOOD);
+  public void setFoodAt(final int x, final int y) {
+    setAt(x, y, Block.FOOD);
   }
 
-  public void setFoodBlockAt(final Point point) {
-    setBlockAt(point, Block.FOOD);
+  public void setFoodAt(final Point point) {
+    setAt(point, Block.FOOD);
   }
 
   public void setSnakeOneAt(final int x, final int y) {
-    setBlockAt(x, y, Block.SNAKE_ONE);
+    setAt(x, y, Block.SNAKE_ONE);
   }
 
   public void setSnakeOneAt(final Point point) {
-    setBlockAt(point, Block.SNAKE_ONE);
+    setAt(point, Block.SNAKE_ONE);
   }
 
   public void setSnakeTwoAt(final int x, final int y) {
-    setBlockAt(x, y, Block.SNAKE_TWO);
+    setAt(x, y, Block.SNAKE_TWO);
   }
 
   public void setSnakeTwoAt(final Point point) {
-    setBlockAt(point, Block.SNAKE_TWO);
+    setAt(point, Block.SNAKE_TWO);
   }
 }

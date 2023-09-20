@@ -95,7 +95,7 @@ public class Snake {
 
   public void executeMovement(final SnakeMovement snakeMovement) {
     tail.addFirst(snakeMovement.getNextHead());
-    if (nonNull(snakeMovement.getCurrentTailTip())) {
+    if (nonNull(snakeMovement.getTailTipToRemove())) {
       tail.removeLast();
     }
   }

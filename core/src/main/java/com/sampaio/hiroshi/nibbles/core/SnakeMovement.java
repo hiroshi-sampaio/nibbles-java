@@ -10,19 +10,19 @@ import lombok.ToString;
 public class SnakeMovement {
   private final Snake snake;
   private final Point nextHead;
-  private final Point currentTailTip;
+  private final Point tailTipToRemove;
 
   public Block getSnakeBlock() {
     return snake.getSnakeBlock();
   }
 
-  public boolean sameSnakeBlockAs(final SnakeMovement other) {
+  public boolean sameSnake(final SnakeMovement other) {
     return this == other
         || this.snake == other.snake
         || this.snake.getSnakeBlock() == other.snake.getSnakeBlock();
   }
 
-  public boolean samePointToSetAsSnake(final SnakeMovement other) {
+  public boolean sameNewHead(final SnakeMovement other) {
     return this == other || this.nextHead.equals(other.nextHead);
   }
 

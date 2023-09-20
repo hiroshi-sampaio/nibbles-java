@@ -62,7 +62,7 @@ public class LevelHelper {
         final char ch = charArray[x];
         final Block block = mapper.map(ch);
 
-        arena.setBlockAt(x, y, block);
+        arena.setAt(x, y, block);
 
         if (mapper.isSnakeHead(ch)) {
           snakeHeadsMap.put(block, arena.getFieldMeasures().pointOf(x, y));

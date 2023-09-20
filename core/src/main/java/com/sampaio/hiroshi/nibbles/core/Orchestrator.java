@@ -14,7 +14,7 @@ public class Orchestrator {
   public void setInitialGameState() {
     for (final Snake snake : gameContext.getSnakes()) {
       for (final Point point : snake.snakePoints()) {
-        gameContext.getArena().setBlockAt(point.getX(), point.getY(), snake.getSnakeBlock());
+        gameContext.getArena().setAt(point.getX(), point.getY(), snake.getSnakeBlock());
       }
     }
   }
@@ -47,13 +47,13 @@ public class Orchestrator {
   private void updateArena(final Collection<SnakeMovement> snakeMovement) {
     for (final SnakeMovement movement : snakeMovement) {
       if (movement.getSnake().isAlive()) {
-        Optional.ofNullable(movement.getCurrentTailTip())
-            .ifPresent(gameContext.getArena()::setEmptyBlockAt);
+        Optional.ofNullable(movement.getTailTipToRemove())
+            .ifPresent(gameContext.getArena()::setEmptyAt);
       }
     }
     for (final SnakeMovement movement : snakeMovement) {
       if (movement.getSnake().isAlive()) {
-        gameContext.getArena().setBlockAt(movement.getNextHead(), movement.getSnakeBlock());
+        gameContext.getArena().setAt(movement.getNextHead(), movement.getSnakeBlock());
       }
     }
   }
@@ -61,6 +61,6 @@ public class Orchestrator {
   private void killSnake(final Block snakeBlock) {
     final Snake snake = gameContext.getSnakeByBlock(snakeBlock).orElseThrow();
     snake.setAlive(false);
-    snake.snakePoints().forEach(gameContext.getArena()::setEmptyBlockAt);
+    snake.snakePoints().forEach(gameContext.getArena()::setEmptyAt);
   }
 }
