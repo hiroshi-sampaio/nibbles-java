@@ -130,7 +130,7 @@ public class GameTest {
   }
 
   @Test
-  void crossingBothGoerIntoWall() {
+  void crossingBothGoingIntoWall() {
 
     final GameContext gameContext =
         levelHelper.createGameContext(
