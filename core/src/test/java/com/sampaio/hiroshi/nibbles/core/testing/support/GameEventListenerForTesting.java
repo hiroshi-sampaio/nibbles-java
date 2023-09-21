@@ -1,10 +1,14 @@
 package com.sampaio.hiroshi.nibbles.core.testing.support;
 
-import com.sampaio.hiroshi.nibbles.core.*;
 import com.sampaio.hiroshi.nibbles.core.driven.GameEventListener;
+import com.sampaio.hiroshi.nibbles.core.event.Event;
+import com.sampaio.hiroshi.nibbles.core.field.Block;
+import com.sampaio.hiroshi.nibbles.core.field.Field;
+import com.sampaio.hiroshi.nibbles.core.field.Point;
+import com.sampaio.hiroshi.nibbles.core.game.GameContext;
+import com.sampaio.hiroshi.nibbles.core.snake.Snake;
+import com.sampaio.hiroshi.nibbles.core.snake.SnakeMove;
 import java.util.*;
-
-import com.sampaio.hiroshi.nibbles.core.testing.support.BlockCharMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -15,24 +19,24 @@ public class GameEventListenerForTesting implements GameEventListener {
   GameContext gameContext;
   @Getter final Deque<String> frameHistory = new ArrayDeque<>();
   @Getter final Deque<EnumSet<Event>> foreseenEventsHistory = new ArrayDeque<>();
-  @Getter final Deque<EnumMap<Block, SnakeMovement>> foreseenMovementsHistory = new ArrayDeque<>();
+  @Getter final Deque<EnumMap<Block, SnakeMove>> foreseenMovesHistory = new ArrayDeque<>();
 
   @Override
   public void initialGameContextSet(final GameContext gameContext) {
     frameHistory.clear();
     foreseenEventsHistory.clear();
-    foreseenMovementsHistory.clear();
+    foreseenMovesHistory.clear();
     this.gameContext = gameContext;
   }
 
   @Override
-  public void arenaUpdated(final Arena arena) {
+  public void fieldUpdated(final Field field) {
     final StringBuilder frameSb = new StringBuilder();
-    for (int y = 0; y < arena.getFieldMeasures().getHeight(); y++) {
-      for (int x = 0; x < arena.getFieldMeasures().getWidth(); x++) {
-        final Block arenaAt = arena.getAt(x, y);
+    for (int y = 0; y < field.getMeasures().getHeight(); y++) {
+      for (int x = 0; x < field.getMeasures().getWidth(); x++) {
+        final Block arenaAt = field.getAt(x, y);
         final Character mapped = blockCharMapper.map(arenaAt);
-        final Point point = gameContext.getArena().getFieldMeasures().pointOf(x, y);
+        final Point point = gameContext.getField().getMeasures().pointOf(x, y);
         if (gameContext
             .getSnakeByBlock(arenaAt)
             .map(Snake::getHead)
@@ -51,9 +55,9 @@ public class GameEventListenerForTesting implements GameEventListener {
   }
 
   @Override
-  public void snakeMovementsForeseen(final EnumMap<Block, SnakeMovement> snakeMovements) {
-    foreseenMovementsHistory.add(snakeMovements);
-    System.out.println("snakeMovementsForeseen = " + snakeMovements);
+  public void snakeMovesForeseen(final EnumMap<Block, SnakeMove> snakeMoves) {
+    foreseenMovesHistory.add(snakeMoves);
+    System.out.println("snakeMovesForeseen = " + snakeMoves);
   }
 
   @Override

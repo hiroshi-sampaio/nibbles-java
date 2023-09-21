@@ -4,6 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.EnumSet;
 
+import com.sampaio.hiroshi.nibbles.core.field.Block;
+import com.sampaio.hiroshi.nibbles.core.event.Event;
+import com.sampaio.hiroshi.nibbles.core.event.Foreseer;
+import com.sampaio.hiroshi.nibbles.core.event.SnakeToEventMapper;
+import com.sampaio.hiroshi.nibbles.core.game.Game;
+import com.sampaio.hiroshi.nibbles.core.game.GameContext;
+import com.sampaio.hiroshi.nibbles.core.event.Fulfiller;
 import com.sampaio.hiroshi.nibbles.core.testing.support.BlockCharMapper;
 import com.sampaio.hiroshi.nibbles.core.testing.support.GameEventListenerForTesting;
 import com.sampaio.hiroshi.nibbles.core.testing.support.LevelHelper;
@@ -34,8 +41,8 @@ public class GameTest {
             .fps(Integer.MAX_VALUE)
             .gameContext(gameContext)
             .eventListener(gameEventListenerForTesting)
-            .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
-            .orchestrator(new Orchestrator(gameContext))
+            .foreseer(new Foreseer(new SnakeToEventMapper()))
+            .fulfiller(new Fulfiller(gameContext))
             .build();
 
     game.gameLoop();
@@ -72,8 +79,8 @@ public class GameTest {
             .fps(Integer.MAX_VALUE)
             .gameContext(gameContext)
             .eventListener(gameEventListenerForTesting)
-            .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
-            .orchestrator(new Orchestrator(gameContext))
+            .foreseer(new Foreseer(new SnakeToEventMapper()))
+            .fulfiller(new Fulfiller(gameContext))
             .build();
 
     game.gameLoop();
@@ -123,8 +130,8 @@ public class GameTest {
             .fps(Integer.MAX_VALUE)
             .gameContext(gameContext)
             .eventListener(gameEventListenerForTesting)
-            .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
-            .orchestrator(new Orchestrator(gameContext))
+            .foreseer(new Foreseer(new SnakeToEventMapper()))
+            .fulfiller(new Fulfiller(gameContext))
             .build();
 
     game.gameLoop();
@@ -155,8 +162,8 @@ public class GameTest {
             .fps(Integer.MAX_VALUE)
             .gameContext(gameContext)
             .eventListener(gameEventListenerForTesting)
-            .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
-            .orchestrator(new Orchestrator(gameContext))
+            .foreseer(new Foreseer(new SnakeToEventMapper()))
+            .fulfiller(new Fulfiller(gameContext))
             .build();
 
     game.gameLoop();
@@ -203,8 +210,8 @@ public class GameTest {
             .fps(Integer.MAX_VALUE)
             .gameContext(gameContext)
             .eventListener(gameEventListenerForTesting)
-            .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
-            .orchestrator(new Orchestrator(gameContext))
+            .foreseer(new Foreseer(new SnakeToEventMapper()))
+            .fulfiller(new Fulfiller(gameContext))
             .build();
 
     game.gameLoop();
@@ -246,8 +253,8 @@ public class GameTest {
             .fps(Integer.MAX_VALUE)
             .gameContext(gameContext)
             .eventListener(gameEventListenerForTesting)
-            .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
-            .orchestrator(new Orchestrator(gameContext))
+            .foreseer(new Foreseer(new SnakeToEventMapper()))
+            .fulfiller(new Fulfiller(gameContext))
             .build();
 
     game.gameLoop();
@@ -285,8 +292,8 @@ public class GameTest {
             .fps(Integer.MAX_VALUE)
             .gameContext(gameContext)
             .eventListener(gameEventListenerForTesting)
-            .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
-            .orchestrator(new Orchestrator(gameContext))
+            .foreseer(new Foreseer(new SnakeToEventMapper()))
+            .fulfiller(new Fulfiller(gameContext))
             .build();
 
     game.gameLoop();
@@ -328,8 +335,8 @@ public class GameTest {
             .fps(Integer.MAX_VALUE)
             .gameContext(gameContext)
             .eventListener(gameEventListenerForTesting)
-            .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
-            .orchestrator(new Orchestrator(gameContext))
+            .foreseer(new Foreseer(new SnakeToEventMapper()))
+            .fulfiller(new Fulfiller(gameContext))
             .build();
 
     game.gameLoop();
@@ -376,8 +383,8 @@ public class GameTest {
             .fps(Integer.MAX_VALUE)
             .gameContext(gameContext)
             .eventListener(gameEventListenerForTesting)
-            .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
-            .orchestrator(new Orchestrator(gameContext))
+            .foreseer(new Foreseer(new SnakeToEventMapper()))
+            .fulfiller(new Fulfiller(gameContext))
             .build();
 
     game.gameLoop();
@@ -404,8 +411,8 @@ public class GameTest {
             .fps(Integer.MAX_VALUE)
             .gameContext(gameContext)
             .eventListener(gameEventListenerForTesting)
-            .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
-            .orchestrator(new Orchestrator(gameContext))
+            .foreseer(new Foreseer(new SnakeToEventMapper()))
+            .fulfiller(new Fulfiller(gameContext))
             .build();
 
     game.gameLoop();
@@ -438,8 +445,8 @@ public class GameTest {
             .fps(Integer.MAX_VALUE)
             .gameContext(gameContext)
             .eventListener(gameEventListenerForTesting)
-            .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
-            .orchestrator(new Orchestrator(gameContext))
+            .foreseer(new Foreseer(new SnakeToEventMapper()))
+            .fulfiller(new Fulfiller(gameContext))
             .build();
 
     game.gameLoop();
@@ -478,8 +485,8 @@ public class GameTest {
             .fps(Integer.MAX_VALUE)
             .gameContext(gameContext)
             .eventListener(gameEventListenerForTesting)
-            .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
-            .orchestrator(new Orchestrator(gameContext))
+            .foreseer(new Foreseer(new SnakeToEventMapper()))
+            .fulfiller(new Fulfiller(gameContext))
             .build();
 
     game.gameLoop();
@@ -524,8 +531,8 @@ public class GameTest {
             .fps(Integer.MAX_VALUE)
             .gameContext(gameContext)
             .eventListener(gameEventListenerForTesting)
-            .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
-            .orchestrator(new Orchestrator(gameContext))
+            .foreseer(new Foreseer(new SnakeToEventMapper()))
+            .fulfiller(new Fulfiller(gameContext))
             .build();
 
     game.gameLoop();
@@ -568,8 +575,8 @@ public class GameTest {
             .fps(Integer.MAX_VALUE)
             .gameContext(gameContext)
             .eventListener(gameEventListenerForTesting)
-            .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
-            .orchestrator(new Orchestrator(gameContext))
+            .foreseer(new Foreseer(new SnakeToEventMapper()))
+            .fulfiller(new Fulfiller(gameContext))
             .build();
 
     game.gameLoop();
@@ -610,8 +617,8 @@ public class GameTest {
             .fps(Integer.MAX_VALUE)
             .gameContext(gameContext)
             .eventListener(gameEventListenerForTesting)
-            .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
-            .orchestrator(new Orchestrator(gameContext))
+            .foreseer(new Foreseer(new SnakeToEventMapper()))
+            .fulfiller(new Fulfiller(gameContext))
             .build();
 
     game.gameLoop();
@@ -640,8 +647,8 @@ public class GameTest {
             .fps(Integer.MAX_VALUE)
             .gameContext(gameContext)
             .eventListener(gameEventListenerForTesting)
-            .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
-            .orchestrator(new Orchestrator(gameContext))
+            .foreseer(new Foreseer(new SnakeToEventMapper()))
+            .fulfiller(new Fulfiller(gameContext))
             .build();
 
     game.gameLoop();

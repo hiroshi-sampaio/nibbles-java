@@ -1,15 +1,15 @@
 package com.sampaio.hiroshi.nibbles.core.driven;
 
-import com.sampaio.hiroshi.nibbles.core.Arena;
-import com.sampaio.hiroshi.nibbles.core.FieldMeasures;
-import com.sampaio.hiroshi.nibbles.core.Snake;
+import com.sampaio.hiroshi.nibbles.core.field.Field;
+import com.sampaio.hiroshi.nibbles.core.field.Measures;
+import com.sampaio.hiroshi.nibbles.core.snake.Snake;
 import java.util.List;
 
 public interface LevelData {
 
   int count();
 
-  Arena loadArena(int level);
+  Field createField(int level);
 
-  List<Snake> createSnakes(int level, FieldMeasures fieldMeasures, List<String> names);
+  List<Snake> createSnakes(int level, Measures measures, List<String> names);
 }

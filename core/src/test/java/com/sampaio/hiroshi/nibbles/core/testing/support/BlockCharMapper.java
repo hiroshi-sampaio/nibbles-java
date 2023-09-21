@@ -1,8 +1,8 @@
 package com.sampaio.hiroshi.nibbles.core.testing.support;
 
-import com.sampaio.hiroshi.nibbles.core.Block;
+import com.sampaio.hiroshi.nibbles.core.field.Block;
 
-import static com.sampaio.hiroshi.nibbles.core.Block.*;
+import static com.sampaio.hiroshi.nibbles.core.field.Block.*;
 
 public class BlockCharMapper {
 

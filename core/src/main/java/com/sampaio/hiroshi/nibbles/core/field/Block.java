@@ -1,4 +1,4 @@
-package com.sampaio.hiroshi.nibbles.core;
+package com.sampaio.hiroshi.nibbles.core.field;
 
 public enum Block {
   EMPTY,

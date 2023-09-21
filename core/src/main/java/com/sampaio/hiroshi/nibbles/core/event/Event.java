@@ -1,4 +1,4 @@
-package com.sampaio.hiroshi.nibbles.core;
+package com.sampaio.hiroshi.nibbles.core.event;
 
 /** Order matters! todo */
 public enum Event {

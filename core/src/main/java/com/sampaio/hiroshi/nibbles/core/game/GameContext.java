@@ -1,5 +1,8 @@
-package com.sampaio.hiroshi.nibbles.core;
+package com.sampaio.hiroshi.nibbles.core.game;
 
+import com.sampaio.hiroshi.nibbles.core.field.Field;
+import com.sampaio.hiroshi.nibbles.core.field.Block;
+import com.sampaio.hiroshi.nibbles.core.snake.Snake;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Optional;
@@ -9,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor(staticName = "of")
 public class GameContext {
-  private final Arena arena;
+  private final Field field;
   private final EnumMap<Block, Snake> blockToSnakeMap;
 
   public Optional<Snake> getSnakeByBlock(final Block snakeBlock) {

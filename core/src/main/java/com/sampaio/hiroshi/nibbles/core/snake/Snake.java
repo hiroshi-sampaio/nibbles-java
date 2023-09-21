@@ -1,7 +1,9 @@
-package com.sampaio.hiroshi.nibbles.core;
+package com.sampaio.hiroshi.nibbles.core.snake;
 
 import static java.util.Objects.nonNull;
 
+import com.sampaio.hiroshi.nibbles.core.field.Block;
+import com.sampaio.hiroshi.nibbles.core.field.Point;
 import java.util.*;
 import lombok.*;
 
@@ -59,7 +61,7 @@ public class Snake {
     length++;
   }
 
-  public Optional<SnakeMovement> foreseeUpdate() {
+  public Optional<SnakeMove> foreseeMove() {
     if (!alive) return Optional.empty();
 
     if (countDownToMove > 0) {
@@ -68,13 +70,13 @@ public class Snake {
 
     if (countDownToMove == 0) {
       countDownToMove = speed;
-      return Optional.ofNullable(foreseeMovement());
+      return Optional.of(nextMove());
     }
 
     return Optional.empty();
   }
 
-  public SnakeMovement foreseeMovement() {
+  private SnakeMove nextMove() {
     final Point currentHeadPoint = tail.getFirst();
 
     final Point nextHeadPoint =
@@ -87,15 +89,15 @@ public class Snake {
 
     if (length == tail.size()) {
       final Point tailTipPoint = tail.getLast();
-      return SnakeMovement.of(this, nextHeadPoint, tailTipPoint);
+      return SnakeMove.of(this, nextHeadPoint, tailTipPoint);
     }
 
-    return SnakeMovement.of(this, nextHeadPoint, null);
+    return SnakeMove.of(this, nextHeadPoint, null);
   }
 
-  public void executeMovement(final SnakeMovement snakeMovement) {
-    tail.addFirst(snakeMovement.getNextHead());
-    if (nonNull(snakeMovement.getTailTipToRemove())) {
+  public void executeMove(final SnakeMove snakeMove) {
+    tail.addFirst(snakeMove.getNextHead());
+    if (nonNull(snakeMove.getTailTipToRemove())) {
       tail.removeLast();
     }
   }

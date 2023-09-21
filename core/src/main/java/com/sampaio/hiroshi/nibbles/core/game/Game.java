@@ -1,7 +1,13 @@
-package com.sampaio.hiroshi.nibbles.core;
+package com.sampaio.hiroshi.nibbles.core.game;
 
 import com.sampaio.hiroshi.nibbles.core.driven.GameEventListener;
 import com.sampaio.hiroshi.nibbles.core.driving.GameInputListener;
+import com.sampaio.hiroshi.nibbles.core.event.Event;
+import com.sampaio.hiroshi.nibbles.core.event.Foreseer;
+import com.sampaio.hiroshi.nibbles.core.event.Fulfiller;
+import com.sampaio.hiroshi.nibbles.core.field.Block;
+import com.sampaio.hiroshi.nibbles.core.snake.Snake;
+import com.sampaio.hiroshi.nibbles.core.snake.SnakeMove;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import lombok.AccessLevel;
@@ -20,34 +26,33 @@ public class Game implements GameInputListener {
 
   private final int fps;
   @Getter @NonNull private final GameContext gameContext;
-  @NonNull private final EventsForeseer eventsForeseer;
+  @NonNull private final Foreseer foreseer;
   @NonNull private final GameEventListener eventListener;
-  @NonNull private final Orchestrator orchestrator;
+  @NonNull private final Fulfiller fulfiller;
 
   @SneakyThrows
   public void gameLoop() {
     final long nanosPerFrame = NANOS_PER_SECOND / fps;
 
-    orchestrator.setInitialGameState();
+    fulfiller.setInitialGameState();
     eventListener.initialGameContextSet(gameContext);
-    eventListener.arenaUpdated(gameContext.getArena());
+    eventListener.fieldUpdated(gameContext.getField());
 
     while (anySnakeAlive()) {
       final long nanoTimeStart = System.nanoTime();
 
-      final EnumMap<Block, SnakeMovement> snakeMovements =
-          eventsForeseer.foreseeSnakeMovements(gameContext.getSnakes());
+      final EnumMap<Block, SnakeMove> snakesMoves =
+          foreseer.foreseeSnakeMoves(gameContext.getSnakes());
 
-      eventListener.snakeMovementsForeseen(snakeMovements);
+      eventListener.snakeMovesForeseen(snakesMoves);
 
-      final EnumSet<Event> events =
-          eventsForeseer.foreseeEventsOnArena(snakeMovements, gameContext.getArena());
+      final EnumSet<Event> events = foreseer.foreseeEvents(snakesMoves, gameContext.getField());
 
       eventListener.eventsForeseen(events);
 
-      orchestrator.handleEvents(events, snakeMovements);
+      fulfiller.fulfillEvents(events, snakesMoves);
 
-      if (!events.isEmpty()) eventListener.arenaUpdated(gameContext.getArena());
+      if (!events.isEmpty()) eventListener.fieldUpdated(gameContext.getField());
 
       final long elapsedNanos = System.nanoTime() - nanoTimeStart;
       if (nanosPerFrame > elapsedNanos) {

@@ -1,4 +1,6 @@
-package com.sampaio.hiroshi.nibbles.core;
+package com.sampaio.hiroshi.nibbles.core.event;
+
+import com.sampaio.hiroshi.nibbles.core.field.Block;
 
 public class SnakeToEventMapper {
 

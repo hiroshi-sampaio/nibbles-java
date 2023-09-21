@@ -1,27 +1,37 @@
-package com.sampaio.hiroshi.nibbles.core;
+package com.sampaio.hiroshi.nibbles.core.event;
 
 import static java.util.function.Predicate.not;
 
+import com.sampaio.hiroshi.nibbles.core.field.Block;
+import com.sampaio.hiroshi.nibbles.core.field.Field;
+import com.sampaio.hiroshi.nibbles.core.field.Point;
+import com.sampaio.hiroshi.nibbles.core.snake.Snake;
+import com.sampaio.hiroshi.nibbles.core.snake.SnakeMove;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import lombok.AccessLevel;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class EventsForeseer {
+@RequiredArgsConstructor
+public class Foreseer {
 
-  @NonNull private final SnakeToEventMapper snakeToEventMapper;
+  private final SnakeToEventMapper snakeToEventMapper;
 
-  public EnumMap<Block, SnakeMovement> foreseeSnakeMovements(final Collection<Snake> snakes) {
+  private static List<Point> foreseeEmptyPoints(final EnumMap<Block, SnakeMove> snakesMoves) {
+    return snakesMoves.values().stream()
+        .map(SnakeMove::getTailTipToRemove)
+        .filter(Objects::nonNull)
+        .toList();
+  }
+
+  public EnumMap<Block, SnakeMove> foreseeSnakeMoves(final Collection<Snake> snakes) {
     return snakes.stream()
-        .map(Snake::foreseeUpdate)
+        .map(Snake::foreseeMove)
         .filter(Optional::isPresent)
         .map(Optional::get)
         .collect(
             Collectors.toMap(
-                SnakeMovement::getSnakeBlock,
+                SnakeMove::getSnakeBlock,
                 Function.identity(),
                 (o, o2) -> {
                   throw new IllegalArgumentException();
@@ -29,18 +39,18 @@ public class EventsForeseer {
                 () -> new EnumMap<>(Block.class)));
   }
 
-  public EnumSet<Event> foreseeEventsOnArena(
-      final EnumMap<Block, SnakeMovement> snakeMovements, final Arena arena) {
+  public EnumSet<Event> foreseeEvents(
+      final EnumMap<Block, SnakeMove> snakeMoves, final Field field) {
 
     final EnumSet<Event> events = EnumSet.noneOf(Event.class);
 
-    final List<Point> foreseenEmptyPoints = getForeseenEmptyPoints(snakeMovements);
+    final List<Point> foreseenEmptyPoints = foreseeEmptyPoints(snakeMoves);
 
-    for (final SnakeMovement snakeMovement : snakeMovements.values()) {
-      final Point nextHeadPoint = snakeMovement.getNextHead();
-      final Block snakeBlock = snakeMovement.getSnakeBlock();
+    for (final SnakeMove snakeMove : snakeMoves.values()) {
+      final Point nextHeadPoint = snakeMove.getNextHead();
+      final Block snakeBlock = snakeMove.getSnakeBlock();
 
-      final Block currentBlockAt = arena.getAt(nextHeadPoint);
+      final Block currentBlockAt = field.getAt(nextHeadPoint);
 
       if (Block.WALL == currentBlockAt) {
         // It is not expected to have wall removed so there is no point on foreseeing changes on
@@ -55,10 +65,10 @@ public class EventsForeseer {
         }
 
         // Which snakes are going to the same point except the current one
-        snakeMovements.values().stream()
-            .filter(not(snakeMovement::sameSnake))
-            .filter(snakeMovement::sameNewHead)
-            .map(SnakeMovement::getSnakeBlock)
+        snakeMoves.values().stream()
+            .filter(not(snakeMove::sameSnake))
+            .filter(snakeMove::sameNewHead)
+            .map(SnakeMove::getSnakeBlock)
             .forEach(foreseenBlocksAt::add);
 
         if (currentBlockAt.canWalkOn()) {
@@ -93,13 +103,5 @@ public class EventsForeseer {
     }
 
     return events;
-  }
-
-  private static List<Point> getForeseenEmptyPoints(
-      final EnumMap<Block, SnakeMovement> snakeMovements) {
-    return snakeMovements.values().stream()
-        .map(SnakeMovement::getTailTipToRemove)
-        .filter(Objects::nonNull)
-        .toList();
   }
 }

@@ -5,8 +5,13 @@ import static java.util.function.Predicate.not;
 import java.io.StringReader;
 import java.util.*;
 
-import com.sampaio.hiroshi.nibbles.core.*;
-import com.sampaio.hiroshi.nibbles.core.testing.support.BlockCharMapper;
+import com.sampaio.hiroshi.nibbles.core.field.Field;
+import com.sampaio.hiroshi.nibbles.core.field.Block;
+import com.sampaio.hiroshi.nibbles.core.field.Measures;
+import com.sampaio.hiroshi.nibbles.core.game.GameContext;
+import com.sampaio.hiroshi.nibbles.core.snake.Direction;
+import com.sampaio.hiroshi.nibbles.core.field.Point;
+import com.sampaio.hiroshi.nibbles.core.snake.Snake;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -14,15 +19,15 @@ public class LevelHelper {
 
   final BlockCharMapper mapper;
 
-  public Arena createArena(final String arenaFieldAsText) {
+  public Field createArena(final String arenaFieldAsText) {
     final List<String> fieldLines = readFieldLines(arenaFieldAsText);
     final int width = fieldLines.stream().mapToInt(String::length).max().orElseThrow();
     final int height = fieldLines.size();
 
-    final Arena arena = FieldMeasures.of(width, height).arenaOf();
+    final Field field = Measures.of(width, height).fieldOf();
 
-    fillArenaFieldAndGetSnakeHeads(fieldLines, arena);
-    return arena;
+    fillArenaFieldAndGetSnakeHeads(fieldLines, field);
+    return field;
   }
 
   public GameContext createGameContext(final String arenaFieldAsText) {
@@ -32,13 +37,13 @@ public class LevelHelper {
     final int width = fieldLines.stream().mapToInt(String::length).max().orElseThrow();
     final int height = fieldLines.size();
 
-    final Arena arena = FieldMeasures.of(width, height).arenaOf();
+    final Field field = Measures.of(width, height).fieldOf();
 
-    final EnumMap<Block, Point> snakeHeads = fillArenaFieldAndGetSnakeHeads(fieldLines, arena);
+    final EnumMap<Block, Point> snakeHeads = fillArenaFieldAndGetSnakeHeads(fieldLines, field);
 
-    final EnumMap<Block, Snake> blockSnakeEnumMap = createSnakes(arena, snakeHeads);
+    final EnumMap<Block, Snake> blockSnakeEnumMap = createSnakes(field, snakeHeads);
 
-    return GameContext.of(arena, blockSnakeEnumMap);
+    return GameContext.of(field, blockSnakeEnumMap);
   }
 
   private static List<String> readFieldLines(final String arenaFieldAsText) {
@@ -54,10 +59,10 @@ public class LevelHelper {
   }
 
   private EnumMap<Block, Point> fillArenaFieldAndGetSnakeHeads(
-      final List<String> arenaFieldLines, final Arena arena) {
+      final List<String> arenaFieldLines, final Field field) {
     final EnumMap<Block, Point> snakeHeadsMap = new EnumMap<>(Block.class);
 
-    for (int y = 0; y < arena.getFieldMeasures().getHeight(); y++) {
+    for (int y = 0; y < field.getMeasures().getHeight(); y++) {
       final String line = arenaFieldLines.get(y);
       final char[] charArray = line.toCharArray();
 
@@ -65,10 +70,10 @@ public class LevelHelper {
         final char ch = charArray[x];
         final Block block = mapper.map(ch);
 
-        arena.setAt(x, y, block);
+        field.setAt(x, y, block);
 
         if (mapper.isSnakeHead(ch)) {
-          snakeHeadsMap.put(block, arena.getFieldMeasures().pointOf(x, y));
+          snakeHeadsMap.put(block, field.getMeasures().pointOf(x, y));
         }
       }
     }
@@ -77,7 +82,7 @@ public class LevelHelper {
   }
 
   private static EnumMap<Block, Snake> createSnakes(
-      final Arena arena, final EnumMap<Block, Point> snakeHeads) {
+          final Field field, final EnumMap<Block, Point> snakeHeads) {
 
     final EnumMap<Block, Snake> blockSnakeEnumMap = new EnumMap<>(Block.class);
 
@@ -110,7 +115,7 @@ public class LevelHelper {
 
         final Optional<Point> nextTailPointOptional =
             pointsAround.stream()
-                .filter(point -> snake.getSnakeBlock() == arena.getAt(point))
+                .filter(point -> snake.getSnakeBlock() == field.getAt(point))
                 .filter(not(snake::contains))
                 .findAny();
 

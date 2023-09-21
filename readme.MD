@@ -1,4 +1,4 @@
-### com.sampaio.hiroshi.nibbles.core.EventsForeseer.foreseeEventsOnArena
+### com.sampaio.hiroshi.nibbles.core.event.EventsForeseer.foreseeEventsOnArena
 
 | Current | Empty | Wall | Food | Snake 1 | Snake 2 | Description                                                                         |
 |---------|-------|------|------|---------|---------|-------------------------------------------------------------------------------------|
