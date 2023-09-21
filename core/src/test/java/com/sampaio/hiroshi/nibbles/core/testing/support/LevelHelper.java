@@ -1,9 +1,12 @@
-package com.sampaio.hiroshi.nibbles.core;
+package com.sampaio.hiroshi.nibbles.core.testing.support;
 
 import static java.util.function.Predicate.not;
 
 import java.io.StringReader;
 import java.util.*;
+
+import com.sampaio.hiroshi.nibbles.core.*;
+import com.sampaio.hiroshi.nibbles.core.testing.support.BlockCharMapper;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

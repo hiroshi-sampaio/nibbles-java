@@ -3,6 +3,10 @@ package com.sampaio.hiroshi.nibbles.core;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.EnumSet;
+
+import com.sampaio.hiroshi.nibbles.core.testing.support.BlockCharMapper;
+import com.sampaio.hiroshi.nibbles.core.testing.support.GameEventListenerForTesting;
+import com.sampaio.hiroshi.nibbles.core.testing.support.LevelHelper;
 import org.junit.jupiter.api.Test;
 
 public class GameTest {

@@ -1,4 +1,6 @@
-package com.sampaio.hiroshi.nibbles.core;
+package com.sampaio.hiroshi.nibbles.core.testing.support;
+
+import com.sampaio.hiroshi.nibbles.core.Block;
 
 import static com.sampaio.hiroshi.nibbles.core.Block.*;
 
