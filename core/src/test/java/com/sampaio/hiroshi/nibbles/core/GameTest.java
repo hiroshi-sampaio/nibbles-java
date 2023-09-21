@@ -543,4 +543,119 @@ public class GameTest {
             #     #
             """);
   }
+
+  @Test
+  void snakeHeadsToWhereItsTailTipWasCrossing() {
+
+    final GameContext gameContext =
+        levelHelper.createGameContext(
+            """
+            #########
+            # 1     #
+            # 1 A11 #
+            # 1   1 #
+            # 11111 #
+            #       #
+            #########
+            """);
+
+    final Game game =
+        Game.builder()
+            .fps(Integer.MAX_VALUE)
+            .gameContext(gameContext)
+            .eventListener(gameEventListenerForTesting)
+            .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
+            .orchestrator(new Orchestrator(gameContext))
+            .build();
+
+    game.gameLoop();
+
+    assertThat(gameEventListenerForTesting.getFrameHistory())
+        .contains(
+            """
+            #########
+            #       #
+            # A1111 #
+            # 1   1 #
+            # 11111 #
+            #       #
+            #########
+            """);
+
+    assertThat(gameEventListenerForTesting.getForeseenEventsHistory())
+        .contains(EnumSet.of(Event.SNAKE_ONE_RUNS_INTO_WALL));
+  }
+
+  @Test
+  void snakeHeadsToWhereItsTailTipWasInline() {
+
+    final GameContext gameContext =
+        levelHelper.createGameContext(
+            """
+            #########
+            #       #
+            # 111A1 #
+            # 1   1 #
+            # 11111 #
+            #       #
+            #########
+            """);
+
+    final Game game =
+        Game.builder()
+            .fps(Integer.MAX_VALUE)
+            .gameContext(gameContext)
+            .eventListener(gameEventListenerForTesting)
+            .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
+            .orchestrator(new Orchestrator(gameContext))
+            .build();
+
+    game.gameLoop();
+
+    assertThat(gameEventListenerForTesting.getForeseenEventsHistory())
+        .contains(EnumSet.of(Event.SNAKE_ONE_RUNS_INTO_WALL));
+  }
+
+  @Test
+  void headbutt_twoSnakeGoingToWhereATailTipWas() {
+
+    final GameContext gameContext =
+        levelHelper.createGameContext(
+            """
+            ##############
+            #     1      #
+            # 11A 1 B222 #
+            # 1   1      #
+            # 11111      #
+            #            #
+            ##############
+            """);
+
+    final Game game =
+        Game.builder()
+            .fps(Integer.MAX_VALUE)
+            .gameContext(gameContext)
+            .eventListener(gameEventListenerForTesting)
+            .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
+            .orchestrator(new Orchestrator(gameContext))
+            .build();
+
+    game.gameLoop();
+
+    assertThat(gameEventListenerForTesting.getFrameHistory())
+        .contains(
+            """
+            ##############
+            #            #
+            # 111A1B222  #
+            # 1   1      #
+            # 11111      #
+            #            #
+            ##############
+            """);
+
+    assertThat(gameEventListenerForTesting.getForeseenEventsHistory())
+        .contains(
+            EnumSet.of(Event.SNAKE_TWO_BUMPS_INTO_SNAKE_ONE, Event.SNAKE_ONE_BUMPS_INTO_SNAKE_TWO));
+  }
 }
