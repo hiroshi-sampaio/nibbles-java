@@ -12,7 +12,7 @@ public class Snake {
   private final Deque<Point> tail;
   @Setter private Direction direction;
   private int length;
-  private int speed;
+  @Getter @Setter private int speed;
   private int countDownToMove;
   @Getter @Setter private boolean alive = true;
 
@@ -87,10 +87,10 @@ public class Snake {
 
     if (length == tail.size()) {
       final Point tailTipPoint = tail.getLast();
-      return SnakeMovement.of(this, nextHeadPoint,  tailTipPoint);
+      return SnakeMovement.of(this, nextHeadPoint, tailTipPoint);
     }
 
-    return SnakeMovement.of(this, nextHeadPoint,  null);
+    return SnakeMovement.of(this, nextHeadPoint, null);
   }
 
   public void executeMovement(final SnakeMovement snakeMovement) {
@@ -105,6 +105,10 @@ public class Snake {
   }
 
   public void increaseSpeed(final int factor) {
+    if (speed - factor >= 1) speed -= factor;
+  }
+
+  public void decreaseSpeed(final int factor) {
     speed += factor;
   }
 

@@ -352,4 +352,195 @@ public class GameTest {
                 Event.SNAKE_ONE_EATS,
                 Event.SNAKE_TWO_EATS));
   }
+
+  @Test
+  void quickerSnakeTripsOnSlowerOne() {
+
+    final GameContext gameContext =
+        levelHelper.createGameContext(
+            """
+                  ##############################
+                  #2222B         11A           #
+                  ##############################
+                  """);
+
+    gameContext.getSnakeByBlock(Block.SNAKE_ONE).orElseThrow().setSpeed(2);
+    gameContext.getSnakeByBlock(Block.SNAKE_TWO).orElseThrow().setSpeed(1);
+
+    final Game game =
+        Game.builder()
+            .fps(Integer.MAX_VALUE)
+            .gameContext(gameContext)
+            .eventListener(gameEventListenerForTesting)
+            .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
+            .orchestrator(new Orchestrator(gameContext))
+            .build();
+
+    game.gameLoop();
+
+    assertThat(gameEventListenerForTesting.getForeseenEventsHistory())
+        .contains(
+            EnumSet.of(Event.SNAKE_TWO_BUMPS_INTO_SNAKE_ONE),
+            EnumSet.of(Event.SNAKE_ONE_RUNS_INTO_WALL));
+  }
+
+  @Test
+  void swapHorizontallyGoingToRight() {
+
+    final GameContext gameContext =
+        levelHelper.createGameContext(
+            """
+                  #############
+                       # 111A
+                  #############
+                  """);
+
+    final Game game =
+        Game.builder()
+            .fps(Integer.MAX_VALUE)
+            .gameContext(gameContext)
+            .eventListener(gameEventListenerForTesting)
+            .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
+            .orchestrator(new Orchestrator(gameContext))
+            .build();
+
+    game.gameLoop();
+
+    assertThat(gameEventListenerForTesting.getForeseenEventsHistory())
+        .contains(EnumSet.of(Event.SNAKE_ONE_RUNS_INTO_WALL));
+
+    assertThat(gameEventListenerForTesting.getFrameHistory())
+        .contains(
+            """
+            #############
+             111A#      \s
+            #############
+            """);
+  }
+
+  @Test
+  void swapHorizontallyGoingToLeft() {
+
+    final GameContext gameContext =
+        levelHelper.createGameContext(
+            """
+                  #############
+                   A111#
+                  #############
+                  """);
+
+    final Game game =
+        Game.builder()
+            .fps(Integer.MAX_VALUE)
+            .gameContext(gameContext)
+            .eventListener(gameEventListenerForTesting)
+            .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
+            .orchestrator(new Orchestrator(gameContext))
+            .build();
+
+    game.gameLoop();
+
+    assertThat(gameEventListenerForTesting.getForeseenEventsHistory())
+        .contains(EnumSet.of(Event.SNAKE_ONE_RUNS_INTO_WALL));
+
+    assertThat(gameEventListenerForTesting.getFrameHistory())
+        .contains(
+            """
+            #############
+                 #A111  \s
+            #############
+            """);
+  }
+
+  @Test
+  void swapVerticallyGoingToUp() {
+
+    final GameContext gameContext =
+        levelHelper.createGameContext(
+            """
+                  #     #
+                  #  A  #
+                  #  1  #
+                  #  1  #
+                  #######
+                  #     #
+                  #     #
+                  #     #
+                  #     #
+                  """);
+
+    final Game game =
+        Game.builder()
+            .fps(Integer.MAX_VALUE)
+            .gameContext(gameContext)
+            .eventListener(gameEventListenerForTesting)
+            .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
+            .orchestrator(new Orchestrator(gameContext))
+            .build();
+
+    game.gameLoop();
+
+    assertThat(gameEventListenerForTesting.getForeseenEventsHistory())
+        .contains(EnumSet.of(Event.SNAKE_ONE_RUNS_INTO_WALL));
+
+    assertThat(gameEventListenerForTesting.getFrameHistory())
+        .contains(
+            """
+            #     #
+            #     #
+            #     #
+            #     #
+            #######
+            #  A  #
+            #  1  #
+            #  1  #
+            #     #
+            """);
+  }
+
+  @Test
+  void swapVerticallyGoingDown() {
+
+    final GameContext gameContext =
+        levelHelper.createGameContext(
+            """
+                  #     #
+                  #     #
+                  #     #
+                  #     #
+                  #######
+                  #  1  #
+                  #  1  #
+                  #  A  #
+                  #     #
+                  """);
+
+    final Game game =
+        Game.builder()
+            .fps(Integer.MAX_VALUE)
+            .gameContext(gameContext)
+            .eventListener(gameEventListenerForTesting)
+            .eventsForeseer(new EventsForeseer(new SnakeToEventMapper()))
+            .orchestrator(new Orchestrator(gameContext))
+            .build();
+
+    game.gameLoop();
+
+    assertThat(gameEventListenerForTesting.getForeseenEventsHistory())
+        .contains(EnumSet.of(Event.SNAKE_ONE_RUNS_INTO_WALL));
+
+    assertThat(gameEventListenerForTesting.getFrameHistory())
+        .contains(
+            """
+            #     #
+            #  1  #
+            #  1  #
+            #  A  #
+            #######
+            #     #
+            #     #
+            #     #
+            #     #
+            """);
+  }
 }
