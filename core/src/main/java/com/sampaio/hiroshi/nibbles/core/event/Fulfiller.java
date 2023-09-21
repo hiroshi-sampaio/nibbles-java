@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 public class Fulfiller {
 
   private final GameContext gameContext;
+  private final EventListenerDrivenPort eventListener;
 
   public void setInitialGameState() {
     for (final Snake snake : gameContext.getSnakes()) {

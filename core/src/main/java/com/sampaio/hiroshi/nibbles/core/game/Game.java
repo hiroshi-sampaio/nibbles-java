@@ -1,8 +1,7 @@
 package com.sampaio.hiroshi.nibbles.core.game;
 
-import com.sampaio.hiroshi.nibbles.core.driven.GameEventListener;
-import com.sampaio.hiroshi.nibbles.core.driving.GameInputListener;
 import com.sampaio.hiroshi.nibbles.core.event.Event;
+import com.sampaio.hiroshi.nibbles.core.event.EventListenerDrivenPort;
 import com.sampaio.hiroshi.nibbles.core.event.Foreseer;
 import com.sampaio.hiroshi.nibbles.core.event.Fulfiller;
 import com.sampaio.hiroshi.nibbles.core.field.Block;
@@ -19,7 +18,7 @@ import lombok.SneakyThrows;
 
 @Builder
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-public class Game implements GameInputListener {
+public class Game implements InputListenerDrivingPort {
 
   public static final long NANOS_PER_MILLI = 1000_000L;
   public static final long NANOS_PER_SECOND = 1000_000_000L;
@@ -27,7 +26,7 @@ public class Game implements GameInputListener {
   private final int fps;
   @Getter @NonNull private final GameContext gameContext;
   @NonNull private final Foreseer foreseer;
-  @NonNull private final GameEventListener eventListener;
+  @NonNull private final EventListenerDrivenPort eventListener;
   @NonNull private final Fulfiller fulfiller;
 
   @SneakyThrows
@@ -36,7 +35,6 @@ public class Game implements GameInputListener {
 
     fulfiller.setInitialGameState();
     eventListener.initialGameContextSet(gameContext);
-    eventListener.fieldUpdated(gameContext.getField());
 
     while (anySnakeAlive()) {
       final long nanoTimeStart = System.nanoTime();
@@ -52,7 +50,7 @@ public class Game implements GameInputListener {
 
       fulfiller.fulfillEvents(events, snakesMoves);
 
-      if (!events.isEmpty()) eventListener.fieldUpdated(gameContext.getField());
+      if (!events.isEmpty()) eventListener.eventsFulfilled(gameContext.getField());
 
       final long elapsedNanos = System.nanoTime() - nanoTimeStart;
       if (nanosPerFrame > elapsedNanos) {

@@ -1,6 +1,6 @@
-package com.sampaio.hiroshi.nibbles.core.driving;
+package com.sampaio.hiroshi.nibbles.core.game;
 
-public interface GameInputListener {
+public interface InputListenerDrivingPort {
   void upSnakeOne();
 
   void downSnakeOne();

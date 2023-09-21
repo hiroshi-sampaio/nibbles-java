@@ -1,6 +1,6 @@
 package com.sampaio.hiroshi.nibbles.core.testing.support;
 
-import com.sampaio.hiroshi.nibbles.core.driven.GameEventListener;
+import com.sampaio.hiroshi.nibbles.core.event.EventListenerDrivenPort;
 import com.sampaio.hiroshi.nibbles.core.event.Event;
 import com.sampaio.hiroshi.nibbles.core.field.Block;
 import com.sampaio.hiroshi.nibbles.core.field.Field;
@@ -13,7 +13,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class GameEventListenerForTesting implements GameEventListener {
+public class GameEventListenerForTesting implements EventListenerDrivenPort {
 
   final BlockCharMapper blockCharMapper;
   GameContext gameContext;
@@ -30,7 +30,7 @@ public class GameEventListenerForTesting implements GameEventListener {
   }
 
   @Override
-  public void fieldUpdated(final Field field) {
+  public void eventsFulfilled(final Field field) {
     final StringBuilder frameSb = new StringBuilder();
     for (int y = 0; y < field.getMeasures().getHeight(); y++) {
       for (int x = 0; x < field.getMeasures().getWidth(); x++) {
