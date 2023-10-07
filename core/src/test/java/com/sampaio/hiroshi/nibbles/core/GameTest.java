@@ -26,8 +26,7 @@ public class GameTest {
     return Game.builder()
         .fps(Integer.MAX_VALUE)
         .gameContext(gameContext)
-        .eventListener(gameEventListenerForTesting)
-        .foreseer(new Foreseer(new SnakeToEventMapper()))
+        .foreseer(new Foreseer(new SnakeToEventMapper(), gameEventListenerForTesting))
         .fulfiller(new Fulfiller(gameContext, gameEventListenerForTesting))
         .build();
   }

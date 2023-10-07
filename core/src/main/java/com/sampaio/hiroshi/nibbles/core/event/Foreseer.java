@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 public class Foreseer {
 
   private final SnakeToEventMapper snakeToEventMapper;
+  private final EventListenerDrivenPort eventListener;
 
   private static List<Point> foreseeEmptyPoints(final EnumMap<Block, SnakeMove> snakesMoves) {
     return snakesMoves.values().stream()
@@ -25,18 +26,23 @@ public class Foreseer {
   }
 
   public EnumMap<Block, SnakeMove> foreseeSnakeMoves(final Collection<Snake> snakes) {
-    return snakes.stream()
-        .map(Snake::foreseeMove)
-        .filter(Optional::isPresent)
-        .map(Optional::get)
-        .collect(
-            Collectors.toMap(
-                SnakeMove::getSnakeBlock,
-                Function.identity(),
-                (o, o2) -> {
-                  throw new IllegalArgumentException();
-                },
-                () -> new EnumMap<>(Block.class)));
+    final EnumMap<Block, SnakeMove> foreseenSnakeMoves =
+        snakes.stream()
+            .map(Snake::foreseeMove)
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .collect(
+                Collectors.toMap(
+                    SnakeMove::getSnakeBlock,
+                    Function.identity(),
+                    (o, o2) -> {
+                      throw new IllegalArgumentException();
+                    },
+                    () -> new EnumMap<>(Block.class)));
+
+    eventListener.snakeMovesForeseen(foreseenSnakeMoves);
+
+    return foreseenSnakeMoves;
   }
 
   public EnumSet<Event> foreseeEvents(
@@ -101,6 +107,8 @@ public class Foreseer {
         }
       }
     }
+
+    eventListener.eventsForeseen(events);
 
     return events;
   }

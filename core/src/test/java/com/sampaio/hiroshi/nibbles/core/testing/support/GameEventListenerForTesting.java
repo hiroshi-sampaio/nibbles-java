@@ -1,9 +1,8 @@
 package com.sampaio.hiroshi.nibbles.core.testing.support;
 
-import com.sampaio.hiroshi.nibbles.core.event.EventListenerDrivenPort;
 import com.sampaio.hiroshi.nibbles.core.event.Event;
+import com.sampaio.hiroshi.nibbles.core.event.EventListenerDrivenPort;
 import com.sampaio.hiroshi.nibbles.core.field.Block;
-import com.sampaio.hiroshi.nibbles.core.field.Field;
 import com.sampaio.hiroshi.nibbles.core.field.Point;
 import com.sampaio.hiroshi.nibbles.core.game.GameContext;
 import com.sampaio.hiroshi.nibbles.core.snake.Snake;
@@ -30,14 +29,14 @@ public class GameEventListenerForTesting implements EventListenerDrivenPort {
   }
 
   @Override
-  public void eventsFulfilled(final Field field) {
+  public void gameContextChanged(final GameContext gameContext) {
     final StringBuilder frameSb = new StringBuilder();
-    for (int y = 0; y < field.getMeasures().getHeight(); y++) {
-      for (int x = 0; x < field.getMeasures().getWidth(); x++) {
-        final Block arenaAt = field.getAt(x, y);
+    for (int y = 0; y < gameContext.getField().getMeasures().getHeight(); y++) {
+      for (int x = 0; x < gameContext.getField().getMeasures().getWidth(); x++) {
+        final Block arenaAt = gameContext.getField().getAt(x, y);
         final Character mapped = blockCharMapper.map(arenaAt);
-        final Point point = gameContext.getField().getMeasures().pointOf(x, y);
-        if (gameContext
+        final Point point = this.gameContext.getField().getMeasures().pointOf(x, y);
+        if (this.gameContext
             .getSnakeByBlock(arenaAt)
             .map(Snake::getHead)
             .filter(point::equals)
@@ -53,6 +52,9 @@ public class GameEventListenerForTesting implements EventListenerDrivenPort {
     frameHistory.add(frame);
     System.out.print(frame);
   }
+
+  @Override
+  public void snakeDied(final Snake snake) {}
 
   @Override
   public void snakeMovesForeseen(final EnumMap<Block, SnakeMove> snakeMoves) {

@@ -1,7 +1,7 @@
 package com.sampaio.hiroshi.nibbles.core.game;
 
-import com.sampaio.hiroshi.nibbles.core.field.Field;
 import com.sampaio.hiroshi.nibbles.core.field.Block;
+import com.sampaio.hiroshi.nibbles.core.field.Field;
 import com.sampaio.hiroshi.nibbles.core.snake.Snake;
 import java.util.Collection;
 import java.util.EnumMap;

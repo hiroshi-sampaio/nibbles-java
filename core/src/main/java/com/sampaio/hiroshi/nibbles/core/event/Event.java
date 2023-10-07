@@ -1,6 +1,5 @@
 package com.sampaio.hiroshi.nibbles.core.event;
 
-/** Order matters! todo */
 public enum Event {
   SNAKE_ONE_SLITHERS,
   SNAKE_TWO_SLITHERS,

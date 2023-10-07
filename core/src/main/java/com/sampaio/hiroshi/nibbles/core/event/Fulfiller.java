@@ -23,10 +23,14 @@ public class Fulfiller {
         gameContext.getField().setAt(point, snake.getSnakeBlock());
       }
     }
+    eventListener.initialGameContextSet(gameContext);
   }
 
   public void fulfillEvents(
       final EnumSet<Event> events, final EnumMap<Block, SnakeMove> snakesMoves) {
+
+    if (events.isEmpty()) return;
+
     for (final Event event : events) {
       switch (event) {
         case SNAKE_ONE_SLITHERS -> snakesMoves.get(Block.SNAKE_ONE).execute();
@@ -48,6 +52,7 @@ public class Fulfiller {
       }
     }
     fulfillMoves(snakesMoves.values());
+    eventListener.gameContextChanged(gameContext);
   }
 
   private void fulfillMoves(final Collection<SnakeMove> snakeMove) {
@@ -68,5 +73,7 @@ public class Fulfiller {
     final Snake snake = gameContext.getSnakeByBlock(snakeBlock).orElseThrow();
     snake.setAlive(false);
     snake.snakePoints().forEach(gameContext.getField()::setEmptyAt);
+
+    eventListener.snakeDied(snake);
   }
 }
