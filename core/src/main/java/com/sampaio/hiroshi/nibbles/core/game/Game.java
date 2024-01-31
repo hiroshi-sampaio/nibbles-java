@@ -4,6 +4,7 @@ import com.sampaio.hiroshi.nibbles.core.event.Event;
 import com.sampaio.hiroshi.nibbles.core.event.Foreseer;
 import com.sampaio.hiroshi.nibbles.core.event.Fulfiller;
 import com.sampaio.hiroshi.nibbles.core.field.Block;
+import com.sampaio.hiroshi.nibbles.core.food.Food;
 import com.sampaio.hiroshi.nibbles.core.snake.Snake;
 import com.sampaio.hiroshi.nibbles.core.snake.SnakeMove;
 import java.util.EnumMap;
@@ -32,6 +33,7 @@ public class Game implements InputListenerDrivingPort {
     final long nanosPerFrame = NANOS_PER_SECOND / fps;
 
     fulfiller.setInitialGameState();
+    //final Food food = gameContext.getChef().feed();
 
     while (anySnakeAlive()) {
       final long nanoTimeStart = System.nanoTime();
