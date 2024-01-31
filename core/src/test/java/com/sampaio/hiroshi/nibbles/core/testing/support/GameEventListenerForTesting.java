@@ -10,7 +10,9 @@ import com.sampaio.hiroshi.nibbles.core.snake.SnakeMove;
 import java.util.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 public class GameEventListenerForTesting implements EventListenerDrivenPort {
 
@@ -50,7 +52,7 @@ public class GameEventListenerForTesting implements EventListenerDrivenPort {
     }
     final String frame = frameSb.toString();
     frameHistory.add(frame);
-    System.out.print(frame);
+    log.info("\n{}", frame);
   }
 
   @Override
@@ -59,12 +61,12 @@ public class GameEventListenerForTesting implements EventListenerDrivenPort {
   @Override
   public void snakeMovesForeseen(final EnumMap<Block, SnakeMove> snakeMoves) {
     foreseenMovesHistory.add(snakeMoves);
-    System.out.println("snakeMovesForeseen = " + snakeMoves);
+    log.info("snakeMovesForeseen = {}", snakeMoves);
   }
 
   @Override
   public void eventsForeseen(final EnumSet<Event> events) {
     foreseenEventsHistory.add(events);
-    System.out.println("eventsForeseen = " + events);
+    log.info("eventsForeseen = {}", events);
   }
 }
