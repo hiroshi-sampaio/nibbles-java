@@ -7,6 +7,7 @@ import com.sampaio.hiroshi.nibbles.core.field.Point;
 import java.util.*;
 import lombok.*;
 
+// Test change
 @ToString(onlyExplicitlyIncluded = true)
 public class Snake {
   @ToString.Include @Getter private final Block snakeBlock;

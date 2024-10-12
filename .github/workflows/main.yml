@@ -21,4 +21,9 @@ jobs:
           pwd
           cd ${GITHUB_WORKSPACE}
           pwd
-          git diff --name-only HEAD HEAD^ | grep / | cut -d/ -f1 | sort -u | xargs -I % find % -name *.java 2>/dev/null | cut -d/ -f1
+          git diff --name-only HEAD HEAD^ | 
+          grep / | 
+          cut -d/ -f1 | 
+          sort -u | 
+          xargs -I % find % -name *.java 2>/dev/null | 
+          cut -d/ -f1
