@@ -16,6 +16,7 @@ jobs:
 
       - name: Get list of folders with lambda functions
         run: |
+          cd ${GITHUB_WORKSPACE}
           git diff --name-only HEAD HEAD~1 | 
           grep / | 
           cut -d/ -f1 | 
