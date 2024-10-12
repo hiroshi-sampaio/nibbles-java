@@ -1,0 +1,24 @@
+name: Test Github actions
+
+on:
+  push:
+    branches: [ 'main' ]
+
+jobs:
+  deploy:
+    name: GoGo
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get list of folders with lambda functions
+        run: |
+          git diff --name-only HEAD HEAD^ | 
+          grep / | 
+          cut -d/ -f1 | 
+          sort -u | 
+          xargs -I % find % -name *.java 2>/dev/null | 
+          cut -d/ -f1
