@@ -48,8 +48,8 @@ public class Field {
     setAt(point, Block.WALL);
   }
 
-  public void setFoodAt(final Point point) {
-    setAt(point, Block.FOOD);
+  public void setItemAt(final Point point) {
+    setAt(point, Block.ITEM);
   }
 
   public void setSnakeOneAt(final Point point) {

@@ -3,7 +3,7 @@ package com.sampaio.hiroshi.nibbles.core.field;
 public enum Block {
   EMPTY,
   WALL,
-  FOOD,
+  ITEM,
   SNAKE_ONE,
   SNAKE_TWO;
 
@@ -12,6 +12,6 @@ public enum Block {
   }
 
   public boolean canWalkOn() {
-    return this == EMPTY || this == FOOD;
+    return this == EMPTY || this == ITEM;
   }
 }

@@ -43,7 +43,7 @@ public class LevelHelper {
 
     final EnumMap<Block, Snake> blockSnakeEnumMap = createSnakes(field, snakeHeads);
 
-    return GameContext.of(field, blockSnakeEnumMap);
+    return GameContext.of(field, blockSnakeEnumMap, new GiverTestImpl());
   }
 
   private static List<String> readFieldLines(final String arenaFieldAsText) {

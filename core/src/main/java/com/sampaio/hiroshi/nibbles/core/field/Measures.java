@@ -1,14 +1,28 @@
 package com.sampaio.hiroshi.nibbles.core.field;
 
 import java.util.function.BiConsumer;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-@Data
-@RequiredArgsConstructor(staticName = "of")
+@Getter
+@Setter
+@ToString
 public class Measures {
+
   private final int width;
   private final int height;
+  private final int heightBits;
+
+  public static Measures of(final int width, final int height) {
+    return new Measures(width, height);
+  }
+
+  private Measures(final int width, final int height) {
+    this.width = width;
+    this.height = height;
+    this.heightBits = Integer.SIZE - Integer.numberOfLeadingZeros(height);
+  }
 
   public Field fieldOf() {
     return Field.of(this);

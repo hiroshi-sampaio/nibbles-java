@@ -18,7 +18,7 @@ public class Foreseer {
   private final SnakeToEventMapper snakeToEventMapper;
   private final EventListenerDrivenPort eventListener;
 
-  private static List<Point> foreseeEmptyPoints(final EnumMap<Block, SnakeMove> snakesMoves) {
+  private List<Point> foreseeEmptyPoints(final EnumMap<Block, SnakeMove> snakesMoves) {
     return snakesMoves.values().stream()
         .map(SnakeMove::getTailTipToRemove)
         .filter(Objects::nonNull)
@@ -78,7 +78,7 @@ public class Foreseer {
             .forEach(foreseenBlocksAt::add);
 
         if (currentBlockAt.canWalkOn()) {
-          if (currentBlockAt == Block.FOOD) {
+          if (currentBlockAt == Block.ITEM) {
             events.add(snakeToEventMapper.mapToEatEvent(snakeBlock));
           }
           if (foreseenBlocksAt.contains(Block.SNAKE_ONE)) {

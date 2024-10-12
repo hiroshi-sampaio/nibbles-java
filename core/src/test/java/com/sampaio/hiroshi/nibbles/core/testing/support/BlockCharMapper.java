@@ -13,7 +13,7 @@ public class BlockCharMapper {
     return switch (block) {
       case EMPTY -> ' ';
       case WALL -> '#';
-      case FOOD -> 'F';
+      case ITEM -> 'I';
       case SNAKE_ONE -> '1';
       case SNAKE_TWO -> '2';
     };
@@ -31,7 +31,7 @@ public class BlockCharMapper {
     return switch (character) {
       case ' ' -> EMPTY;
       case '#' -> WALL;
-      case 'F' -> FOOD;
+      case 'I' -> ITEM;
       case SNAKE_ONE_HEAD, '1' -> SNAKE_ONE;
       case SNAKE_TWO_HEAD, '2' -> SNAKE_TWO;
       default -> throw new IllegalStateException("Unexpected value: " + character);

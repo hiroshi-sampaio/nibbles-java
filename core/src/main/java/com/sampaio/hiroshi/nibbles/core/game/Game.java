@@ -4,9 +4,9 @@ import com.sampaio.hiroshi.nibbles.core.event.Event;
 import com.sampaio.hiroshi.nibbles.core.event.Foreseer;
 import com.sampaio.hiroshi.nibbles.core.event.Fulfiller;
 import com.sampaio.hiroshi.nibbles.core.field.Block;
-import com.sampaio.hiroshi.nibbles.core.food.Food;
 import com.sampaio.hiroshi.nibbles.core.snake.Snake;
 import com.sampaio.hiroshi.nibbles.core.snake.SnakeMove;
+import java.time.Duration;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import lombok.AccessLevel;
@@ -21,22 +21,26 @@ import lombok.SneakyThrows;
 public class Game implements InputListenerDrivingPort {
 
   public static final long NANOS_PER_MILLI = 1000_000L;
-  public static final long NANOS_PER_SECOND = 1000_000_000L;
 
   private final int fps;
-  @Getter @NonNull private final GameContext gameContext;
-  @NonNull private final Foreseer foreseer;
-  @NonNull private final Fulfiller fulfiller;
+  @Getter
+  @NonNull
+  private final GameContext gameContext;
+  @NonNull
+  private final Foreseer foreseer;
+  @NonNull
+  private final Fulfiller fulfiller;
 
   @SneakyThrows
   public void gameLoop() {
-    final long nanosPerFrame = NANOS_PER_SECOND / fps;
+    final long nanosPerFrame = Duration.ofSeconds(1).toNanos() / fps;
 
     fulfiller.setInitialGameState();
-    //final Food food = gameContext.getChef().feed();
 
     while (anySnakeAlive()) {
       final long nanoTimeStart = System.nanoTime();
+
+      gameContext.getGiver().placeItems(gameContext);
 
       final EnumMap<Block, SnakeMove> snakesMoves =
           foreseer.foreseeSnakeMoves(gameContext.getSnakes());
@@ -44,12 +48,14 @@ public class Game implements InputListenerDrivingPort {
       final EnumSet<Event> events = foreseer.foreseeEvents(snakesMoves, gameContext.getField());
 
       fulfiller.fulfillEvents(events, snakesMoves);
+      gameContext.incrementFrameCount();
 
       final long elapsedNanos = System.nanoTime() - nanoTimeStart;
       if (nanosPerFrame > elapsedNanos) {
         final long remainingNanos = nanosPerFrame - elapsedNanos;
         final long remainingMillis = remainingNanos / NANOS_PER_MILLI;
         final int nanosPartOfRemainingTime = (int) (remainingNanos % NANOS_PER_MILLI);
+        // noinspection BusyWait
         Thread.sleep(remainingMillis, nanosPartOfRemainingTime);
       }
     }
@@ -57,7 +63,7 @@ public class Game implements InputListenerDrivingPort {
 
   private boolean anySnakeAlive() {
     for (Snake snake : gameContext.getSnakes()) {
-      if (snake.isAlive()) return true;
+      if (snake.isAlive()) {return true;}
     }
     return false;
   }
