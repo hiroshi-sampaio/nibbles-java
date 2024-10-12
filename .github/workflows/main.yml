@@ -26,4 +26,5 @@ jobs:
           cut -d/ -f1 | 
           sort -u | 
           xargs -I % find % -name *.java 2>/dev/null | 
-          cut -d/ -f1
+          cut -d/ -f1 |
+          sort -u
